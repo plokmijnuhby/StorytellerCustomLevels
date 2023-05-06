@@ -7,7 +7,10 @@ internal class SoundManager_PlayMusicForLevel
 {
     static void Prefix(ref LevelID levelId)
     {
-        Utils.LoadLevel(levelId);
-        levelId = Utils.musicSources[levelId];
+        if (Utils.musicSources.ContainsKey(levelId))
+        {
+            Utils.LoadLevel(levelId);
+            levelId = Utils.musicSources[levelId];
+        }
     }
 }
