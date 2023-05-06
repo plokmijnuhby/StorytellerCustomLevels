@@ -136,12 +136,12 @@ internal class Utils
     }
     static void ProcessGoal(string[] line)
     {
-        if (line.Length < 2)
+        var source = ActorId.None;
+        if (line.Length > 1)
         {
-            throw new InvalidOperationException("Could not parse level file");
+            source = GetEnum<ActorId>(line[1]);
         }
-        var source = GetEnum<ActorId>(line[1]);
-        ActorId target = ActorId.None;
+        var target = ActorId.None;
         if (line.Length > 2)
         {
             target = GetEnum<ActorId>(line[2]);
