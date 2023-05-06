@@ -141,12 +141,8 @@ internal class Utils
             throw new InvalidOperationException("Could not parse level file");
         }
         var source = GetEnum<ActorId>(line[1]);
-        ActorId target;
-        if (line.Length == 2)
-        {
-            target = source;
-        }
-        else
+        ActorId target = ActorId.None;
+        if (line.Length > 2)
         {
             target = GetEnum<ActorId>(line[2]);
         }
