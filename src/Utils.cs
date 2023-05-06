@@ -136,6 +136,7 @@ internal class Utils
     }
     static void ProcessGoal(string[] line)
     {
+        if (line.Length == 0) return;
         var source = ActorId.None;
         if (line.Length > 1)
         {
