@@ -136,7 +136,10 @@ internal class Utils
     }
     static void ProcessGoal(string[] line)
     {
-        if (line.Length == 0) return;
+        if (line.Length == 0)
+        {
+            throw new InvalidOperationException("Could not parse level file");
+        }
         var source = ActorId.None;
         if (line.Length > 1)
         {
