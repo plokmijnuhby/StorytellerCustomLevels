@@ -4,25 +4,27 @@ This is a mod for the game Storyteller, to add the ability to load custom levels
 ## Installation instructions:
 * Download the correct version of BepInEx. You will need Bleeding Edge #667 rather than the release version, for those who know what that means. The windows link is [here](https://builds.bepinex.dev/projects/bepinex_be/667/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.667%2B6b500b3.zip), the mac link is [here](https://builds.bepinex.dev/projects/bepinex_be/667/BepInEx-Unity.IL2CPP-macos-x64-6.0.0-be.667%2B6b500b3.zip).
 * Install BepInEx by following [these instructions](https://docs.bepinex.dev/articles/user_guide/installation/index.html). Ignore the bit at the start about about downloading, since you've already done that.
-* Download the latest version of this mod from the releases page. Put it in the folder "BepInEx/plugins". Run the game, and the mod should load and create a folder called "custom_levels" in the game root. You can then add levels into this folder and they will immediately be detected by the mod.
+* Download the latest version of this mod from [the releases page](https://github.com/plokmijnuhby/StorytellerCustomLevels/releases). Put it in the folder "BepInEx/plugins". Run the game, and the mod should load and create a folder called "custom_levels" in the game root. You can then add levels into this folder and they will immediately be detected by the mod.
 * This is not strictly necessary, but I recommend disabling the BepInEx console. To do this, open the config file, find the `Logging.Console` section, and change the line `Enabled = true` to `Enabled = false`, and save the file.
 
 ## Making levels
 The level format consists of a series of commands. To explain the format, here's a sample level - you might recognise it:
-    Frames 6
-    Music OthelloLigeia
-    Goal Isobel Commits a Crime
-        Murders Ligeia None
-    Subgoal but everyone meets their demise
-        DiedBy Edgar
-        DiedBy Eleonora
-        DiedBy Ligeia
-    Setting Marriage
-    Setting Poison
-    Setting Study
-    Actor Edgar
-    Actor Eleonora
-    Actor Ligeia
+```
+Frames 6
+Music OthelloLigeia
+Goal Isobel Commits a Crime
+    Murders Ligeia None
+Subgoal but everyone meets their demise
+    DiedBy Edgar
+    DiedBy Eleonora
+    DiedBy Ligeia
+Setting Marriage
+Setting Poison
+Setting Study
+Actor Edgar
+Actor Eleonora
+Actor Ligeia
+```
 The level consists of a series of commands in order. I will run through the possible commands here.
 
 * `Music <level>` specifies that the music from the given level should be used.
