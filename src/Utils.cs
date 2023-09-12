@@ -21,11 +21,15 @@ internal class Utils
         LevelID.Trailer_Death
     };
     static int currentSubgoals = 0;
-    static readonly Dictionary<LevelID, Dictionary<string, List<GoalQuery>>> goalInfos = new();
-    static List<GoalQuery> lastGoal;
+    static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     static LevelSpec curlevel; 
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
+    static Goal lastRootGoal = new()
+    {
+        type = GoalType.All,
+        goals = new()
+    };
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
@@ -59,8 +63,12 @@ internal class Utils
         };
         curlevel.goals.Add(goalSpec);
 
-        lastGoal = new();
-        goalInfos[curlevel.id][name] = lastGoal;
+        lastRootGoal = new()
+        {
+            type = GoalType.All,
+            goals = new()
+        };
+        goalInfos[curlevel.id][name] = lastRootGoal;
     }
     static void SetFrames(string frameString)
     {
@@ -150,13 +158,14 @@ internal class Utils
         {
             target = GetEnum<ActorId>(line[2]);
         }
-        var query = new GoalQuery
+        var query = new Goal
         {
+            type = GoalType.Event,
             eventType = GetEnum<ET>(line[0]),
             source = source,
             target = target
         };
-        lastGoal.Add(query);
+        lastRootGoal.goals.Add(query);
     }
     static void ReportError(string message)
     {
@@ -167,18 +176,9 @@ internal class Utils
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {
-        foreach (var (goalId, queries) in goalInfos[spec.id])
+        foreach (var (goalId, goal) in goalInfos[spec.id])
         {
-            bool succeeded = true;
-            foreach (var query in queries)
-            {
-                if (!query.CheckEvent(spec, story))
-                {
-                    succeeded = false;
-                    break;
-                }
-            }
-            if (succeeded)
+            if (goal.CheckEvent(spec, story, 0) != -1)
             {
                 result.SetGoal(goalId);
             }
@@ -192,8 +192,12 @@ internal class Utils
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
         goalInfos[id] = new();
-        lastGoal = new();
         musicSources[id] = LevelID.Invalid;
+
+        lastRootGoal = new() {
+            type = GoalType.All,
+            goals = new()
+        };
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
