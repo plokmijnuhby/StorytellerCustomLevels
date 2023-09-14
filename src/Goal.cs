@@ -14,7 +14,7 @@ internal enum GoalType
 }
 
 
-internal struct Goal
+internal class Goal
 {
     public GoalType type;
     public ET eventType;
@@ -28,7 +28,7 @@ internal struct Goal
         this.type = type;
     }
 
-    private readonly bool CheckWithouts(Story story, int end)
+    private bool CheckWithouts(Story story, int end)
     {
         foreach (var goal in withouts)
         {
@@ -44,7 +44,7 @@ internal struct Goal
     }
 
 
-    public readonly int CheckGoal(LevelSpec spec, Story story, int start)
+    public int CheckGoal(LevelSpec spec, Story story, int start)
     {
         int end;
         switch (type)

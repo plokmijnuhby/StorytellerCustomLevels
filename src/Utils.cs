@@ -150,9 +150,8 @@ internal class Utils
         {
             target = GetEnum<ActorId>(line[2]);
         }
-        var query = new Goal
+        var query = new Goal(GoalType.Event)
         {
-            type = GoalType.Event,
             eventType = GetEnum<ET>(line[0]),
             source = source,
             target = target
