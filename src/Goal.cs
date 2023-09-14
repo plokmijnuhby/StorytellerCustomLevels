@@ -38,6 +38,17 @@ internal struct Goal
                 }
                 return -1;
             }
+            case GoalType.Without:
+            {
+                for (int i = 0; i <= start; i++)
+                {
+                    if (Solver.HasEvent(story, i, eventType, source, target))
+                    {
+                        return -1;
+                    }
+                }
+                return start;
+            }
             case GoalType.Any:
             {
                 int end = -1;
