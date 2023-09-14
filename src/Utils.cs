@@ -25,11 +25,7 @@ internal class Utils
     static LevelSpec curlevel; 
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
-    static Goal lastRootGoal = new()
-    {
-        type = GoalType.All,
-        goals = new()
-    };
+    static Goal lastRootGoal = new(GoalType.All);
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
@@ -63,11 +59,7 @@ internal class Utils
         };
         curlevel.goals.Add(goalSpec);
 
-        lastRootGoal = new()
-        {
-            type = GoalType.All,
-            goals = new()
-        };
+        lastRootGoal = new(GoalType.All);
         goalInfos[curlevel.id][name] = lastRootGoal;
     }
     static void SetFrames(string frameString)
@@ -192,12 +184,8 @@ internal class Utils
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
         goalInfos[id] = new();
+        lastRootGoal = new(GoalType.All);
         musicSources[id] = LevelID.Invalid;
-
-        lastRootGoal = new() {
-            type = GoalType.All,
-            goals = new()
-        };
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();

@@ -8,7 +8,6 @@ internal enum GoalType
     Invalid,
     Event,
     Solver,
-    Without,
     All,
     Any,
     Sequence
@@ -21,10 +20,33 @@ internal struct Goal
     public ET eventType;
     public ActorId source;
     public ActorId target;
-    public List<Goal> goals;
+    public List<Goal> goals = new();
+    public List<Goal> withouts = new();
+
+    public Goal(GoalType type)
+    {
+        this.type = type;
+    }
+
+    private readonly bool CheckWithouts(Story story, int end)
+    {
+        foreach (var goal in withouts)
+        {
+            for (int i = 0; i <= end; i++)
+            {
+                if (Solver.HasEvent(story, i, goal.eventType, goal.source, goal.target))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     public readonly int CheckGoal(LevelSpec spec, Story story, int start)
     {
+        int end;
         switch (type)
         {
             case GoalType.Event:
@@ -38,20 +60,9 @@ internal struct Goal
                 }
                 return -1;
             }
-            case GoalType.Without:
-            {
-                for (int i = 0; i <= start; i++)
-                {
-                    if (Solver.HasEvent(story, i, eventType, source, target))
-                    {
-                        return -1;
-                    }
-                }
-                return start;
-            }
             case GoalType.Any:
             {
-                int end = -1;
+                end = -1;
                 foreach (var goal in goals)
                 {
                     int found = goal.CheckGoal(spec, story, start);
@@ -64,11 +75,11 @@ internal struct Goal
                         end = Math.Min(end, found);
                     }
                 }
-                return end;
+                break;
             }
             case GoalType.All:
             {
-                int end = start;
+                end = start;
                 foreach (var goal in goals)
                 {
                     int found = goal.CheckGoal(spec, story, start);
@@ -78,11 +89,11 @@ internal struct Goal
                     }
                     end = Math.Max(end, found);
                 }
-                return end;
+                break;
             }
             case GoalType.Sequence:
             {
-                int end = start;
+                end = start;
                 foreach (var goal in goals)
                 {
                     end = goal.CheckGoal(spec, story, end);
@@ -91,9 +102,14 @@ internal struct Goal
                         return -1;
                     }
                 }
-                return end;
+                break;
             }
             default: return -1;
         }
+        if (CheckWithouts(story, end))
+        {
+            return end;
+        }
+        return -1;
     }
 }
