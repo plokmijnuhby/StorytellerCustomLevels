@@ -23,7 +23,7 @@ internal struct Goal
     public ActorId target;
     public List<Goal> goals;
 
-    public readonly int CheckEvent(LevelSpec spec, Story story, int start)
+    public readonly int CheckGoal(LevelSpec spec, Story story, int start)
     {
         switch (type)
         {
@@ -43,7 +43,7 @@ internal struct Goal
                 int end = -1;
                 foreach (var goal in goals)
                 {
-                    int found = goal.CheckEvent(spec, story, start);
+                    int found = goal.CheckGoal(spec, story, start);
                     if (end == -1)
                     {
                         end = found;
@@ -60,7 +60,7 @@ internal struct Goal
                 int end = start;
                 foreach (var goal in goals)
                 {
-                    int found = goal.CheckEvent(spec, story, start);
+                    int found = goal.CheckGoal(spec, story, start);
                     if (found == -1)
                     {
                         return -1;
@@ -74,7 +74,7 @@ internal struct Goal
                 int end = start;
                 foreach (var goal in goals)
                 {
-                    end = goal.CheckEvent(spec, story, end);
+                    end = goal.CheckGoal(spec, story, end);
                     if (end == -1)
                     {
                         return -1;

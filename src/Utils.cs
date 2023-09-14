@@ -178,7 +178,7 @@ internal class Utils
     {
         foreach (var (goalId, goal) in goalInfos[spec.id])
         {
-            if (goal.CheckEvent(spec, story, 0) != -1)
+            if (goal.CheckGoal(spec, story, 0) != -1)
             {
                 result.SetGoal(goalId);
             }
