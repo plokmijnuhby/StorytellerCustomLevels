@@ -28,7 +28,25 @@ internal class Utils
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
-
+    static Goal ProcessEventGoal(string[] line, GoalType type)
+    {
+        var source = ActorId.None;
+        if (line.Length > 1)
+        {
+            source = GetEnum<ActorId>(line[1]);
+        }
+        var target = ActorId.None;
+        if (line.Length > 2)
+        {
+            target = GetEnum<ActorId>(line[2]);
+        }
+        return new Goal(type)
+        {
+            eventType = GetEnum<ET>(line[0]),
+            source = source,
+            target = target
+        };
+    }
     static int ProcessGoal(string[] lines, int start, string oldIndent, Goal root)
     {
         string indent = string.Concat(lines[start].TakeWhile(char.IsWhiteSpace));
@@ -57,29 +75,18 @@ internal class Utils
             }
             catch (InvalidOperationException) { }
 
-            if (type != GoalType.Invalid)
+            if (type == GoalType.Without)
             {
-                goal = new Goal(type);
-                i = ProcessGoal(lines, i + 1, indent, goal);
+                goal = ProcessEventGoal(lineParts[1..], type);
+            }
+            else if (type == GoalType.Invalid)
+            {
+                goal = ProcessEventGoal(lineParts, GoalType.Event);
             }
             else
             {
-                var source = ActorId.None;
-                if (lineParts.Length > 1)
-                {
-                    source = GetEnum<ActorId>(lineParts[1]);
-                }
-                var target = ActorId.None;
-                if (lineParts.Length > 2)
-                {
-                    target = GetEnum<ActorId>(lineParts[2]);
-                }
-                goal = new Goal(GoalType.Event)
-                {
-                    eventType = GetEnum<ET>(lineParts[0]),
-                    source = source,
-                    target = target
-                };
+                goal = new Goal(type);
+                i = ProcessGoal(lines, i + 1, indent, goal);
             }
             root.goals.Add(goal);
         }
