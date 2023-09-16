@@ -25,78 +25,11 @@ internal class Utils
     static LevelSpec curlevel; 
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
-    static Goal lastRootGoal = new(GoalType.All);
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
-    static void AddGoal(string goal, bool isSubgoal)
-    {
-        // The default version of Campaign.LoadCampaign uses functions that do what I'm about to do in a much simpler way,
-        // but they don't work here because I'm overwriting a level, which is not supposed to happen.
-        // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
-        var name = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
 
-        if (isSubgoal)
-        {
-            if (currentSubgoals == 3)
-            {
-                throw new InvalidOperationException("Can't fit more than three subgoals on screen");
-            }
-            currentSubgoals++;
-        }
-
-        Text.AddText(name, goal, Array.Empty<string>());
-        var description = new TextBlock()
-        {
-            key = name,
-            values = Array.Empty<Il2CppSystem.Object>()
-        };
-        var goalSpec = new LevelGoalSpec()
-        {
-            id = name,
-            description = description,
-            isSubgoal = isSubgoal
-        };
-        curlevel.goals.Add(goalSpec);
-
-        lastRootGoal = new(GoalType.All);
-        goalInfos[curlevel.id][name] = lastRootGoal;
-    }
-    static void SetFrames(string frameString)
-    {
-        var valid = new string[] { "3", "4", "6", "8" };
-        if (!valid.Contains(frameString))
-        {
-            throw new InvalidOperationException("Frames must be 3, 4, 6, or 8, not " + frameString);
-        }
-
-        int frames = int.Parse(frameString);
-        curlevel.frames = frames;
-
-        // The settings that are in place at the start of the level.
-        // Used for some tutorials, but here we can just leave them as the default Setting.Empty.
-        curlevel.startingSettings = new Setting[frames];
-    }
-    static T GetEnum<T>(string name) where T : struct
-    {
-        if (Enum.TryParse(name, true, out T result))
-        {
-            return result;
-        }
-        else
-        {
-            throw new InvalidOperationException($"Argument {name} was not a valid value");
-        }
-    }
-    static void SetWitchStartsHot()
-    {
-        // No, I don't know why this has to be set in the toolbox either.
-        curlevel.toolbox.Add(new ToolSpec
-        {
-            witchStartsHot = true
-        });
-    }
-    static int ProcessGoal(string[] lines, int start, string oldIndent)
+    static int ProcessGoal(string[] lines, int start, string oldIndent, Goal root)
     {
         string indent = string.Concat(lines[start].TakeWhile(char.IsWhiteSpace));
         if (!indent.StartsWith(oldIndent))
@@ -132,9 +65,78 @@ internal class Utils
                 source = source,
                 target = target
             };
-            lastRootGoal.goals.Add(query);
+            root.goals.Add(query);
         }
         return lines.Length - 1;
+    }
+    static int AddGoal(string[] lines, int start, bool isSubgoal)
+    {
+        // The default version of Campaign.LoadCampaign uses functions that do what I'm about to do in a much simpler way,
+        // but they don't work here because I'm overwriting a level, which is not supposed to happen.
+        // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
+        var name = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
+
+        if (isSubgoal)
+        {
+            if (currentSubgoals == 3)
+            {
+                throw new InvalidOperationException("Can't fit more than three subgoals on screen");
+            }
+            currentSubgoals++;
+        }
+
+        string goalName = string.Join(' ', lines[start].Split().Skip(1));
+        Text.AddText(name, goalName, Array.Empty<string>());
+        var description = new TextBlock()
+        {
+            key = name,
+            values = Array.Empty<Il2CppSystem.Object>()
+        };
+        var goalSpec = new LevelGoalSpec()
+        {
+            id = name,
+            description = description,
+            isSubgoal = isSubgoal
+        };
+        curlevel.goals.Add(goalSpec);
+
+        var goal = new Goal(GoalType.All);
+        goalInfos[curlevel.id][name] = goal;
+        return ProcessGoal(lines, start + 1, "", new(GoalType.All));
+    }
+    static void SetFrames(string frameString)
+    {
+        var valid = new string[] { "3", "4", "6", "8" };
+        if (!valid.Contains(frameString))
+        {
+            throw new InvalidOperationException("Frames must be 3, 4, 6, or 8, not " + frameString);
+        }
+
+        int frames = int.Parse(frameString);
+        curlevel.frames = frames;
+
+        // The settings that are in place at the start of the level.
+        // Used for some tutorials, but here we can just leave them as the default Setting.Empty.
+        curlevel.startingSettings = new Setting[frames];
+    }
+    static T GetEnum<T>(string name) where T : struct
+    {
+        if (Enum.TryParse(name, true, out T result))
+        {
+            return result;
+        }
+        else
+        {
+            throw new InvalidOperationException($"Argument {name} was not a valid value");
+        }
+    }
+    static void SetWitchStartsHot()
+    {
+        // No, I don't know why this has to be set in the toolbox either.
+        curlevel.toolbox.Add(new ToolSpec
+        {
+            witchStartsHot = true
+        });
     }
     static int Process(string[] lines, int start)
     {
@@ -145,8 +147,7 @@ internal class Utils
                 SetFrames(line[1]);
                 return start;
             case "Goal":
-                AddGoal(string.Join(" ", line.Skip(1)), false);
-                return ProcessGoal(lines, start + 1, "");
+                return AddGoal(lines, start, false);
             case "Subgoal":
                 AddGoal(string.Join(" ", line.Skip(1)), true);
                 return ProcessGoal(lines, start + 1, "");
@@ -194,7 +195,6 @@ internal class Utils
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
         goalInfos[id] = new();
-        lastRootGoal = new(GoalType.All);
         musicSources[id] = LevelID.Invalid;
 
         // The toolbox contains all the actors and settings.
