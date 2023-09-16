@@ -1,0 +1,12 @@
+Frames 6
+Music EpilogueBaronVsWerewolf
+Goal Monster is Slain
+  ANY
+    DiedBy Bernard
+    DiedBy Baron
+Setting Moon
+Setting Disguise
+Setting Forest
+Setting VanHelsing
+Actor Bernard
+Actor Baron

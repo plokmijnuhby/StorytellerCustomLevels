@@ -1,0 +1,12 @@
+Frames 6
+Music SnowWhite_4
+Goal Mirror Betrays Isobel
+  SEQUENCE
+    MirrorAccepts None Ligeia
+    MirrorRejects None Ligeia
+Setting MagicMirror
+Setting Poison
+Setting Study
+Setting Revive
+Actor Eleonora
+Actor Ligeia

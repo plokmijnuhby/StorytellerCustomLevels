@@ -1,0 +1,12 @@
+Frames 6
+Music Stockholm
+Goal Peachy is Last Alive
+    DiedBy Dwarfi
+    DiedBy Dwarfo
+    WITHOUT DiedBy Dwarfa
+Setting Fight
+Setting Dungeon
+Setting Cliff
+Actor Dwarfa
+Actor Dwarfi
+Actor Dwarfo

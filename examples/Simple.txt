@@ -1,0 +1,14 @@
+Frames 6
+Music OthelloLigeia
+Goal Isobel Commits a Crime
+    Murders Ligeia None
+Subgoal but everyone meets their demise
+    DiedBy Edgar
+    DiedBy Eleonora
+    DiedBy Ligeia
+Setting Marriage
+Setting Poison
+Setting Study
+Actor Edgar
+Actor Eleonora
+Actor Ligeia

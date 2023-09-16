@@ -1,0 +1,16 @@
+Frames 4
+Music ToxicMonarchs
+Goal Monarch Usurps the Throne
+  ANY
+    ALL
+      Imprisons King Queen
+      TakesCrownFrom King
+    ALL
+      Imprisons Queen King
+      TakesCrownFrom Queen
+Setting Dungeon
+Setting Throne
+Setting Graveyard
+Setting Revive
+Actor King
+Actor Queen
