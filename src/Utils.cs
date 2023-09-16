@@ -112,11 +112,7 @@ internal class Utils
             }
             if (!line.StartsWith(indent))
             {
-                if (line.StartsWith(oldIndent))
-                {
-                    return i - 1;
-                }
-                throw new InvalidOperationException("Incorrect indentation in level file");
+                return i - 1;
             }
             string[] lineParts = line[indent.Length..].Split();
 
