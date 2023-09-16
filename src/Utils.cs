@@ -49,33 +49,44 @@ internal class Utils
             }
             string[] lineParts = line[indent.Length..].Split();
 
-            var source = ActorId.None;
-            if (lineParts.Length > 1)
+            GoalType type = GoalType.Invalid;
+            Goal goal = null;
+            try
             {
-                source = GetEnum<ActorId>(lineParts[1]);
+                type = GetEnum<GoalType>(lineParts[0]);
             }
-            var target = ActorId.None;
-            if (lineParts.Length > 2)
+            catch (InvalidOperationException) { }
+
+            if (type != GoalType.Invalid)
             {
-                target = GetEnum<ActorId>(lineParts[2]);
+                goal = new Goal(type);
+                i = ProcessGoal(lines, i + 1, indent, goal);
             }
-            var query = new Goal(GoalType.Event)
+            else
             {
-                eventType = GetEnum<ET>(lineParts[0]),
-                source = source,
-                target = target
-            };
-            root.goals.Add(query);
+                var source = ActorId.None;
+                if (lineParts.Length > 1)
+                {
+                    source = GetEnum<ActorId>(lineParts[1]);
+                }
+                var target = ActorId.None;
+                if (lineParts.Length > 2)
+                {
+                    target = GetEnum<ActorId>(lineParts[2]);
+                }
+                goal = new Goal(GoalType.Event)
+                {
+                    eventType = GetEnum<ET>(lineParts[0]),
+                    source = source,
+                    target = target
+                };
+            }
+            root.goals.Add(goal);
         }
         return lines.Length - 1;
     }
-    static int AddGoal(string[] lines, int start, bool isSubgoal)
+    static Goal AddGoal(string name, bool isSubgoal)
     {
-        // The default version of Campaign.LoadCampaign uses functions that do what I'm about to do in a much simpler way,
-        // but they don't work here because I'm overwriting a level, which is not supposed to happen.
-        // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
-        var name = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
-
         if (isSubgoal)
         {
             if (currentSubgoals == 3)
@@ -85,24 +96,35 @@ internal class Utils
             currentSubgoals++;
         }
 
-        string goalName = string.Join(' ', lines[start].Split().Skip(1));
-        Text.AddText(name, goalName, Array.Empty<string>());
+        string internalName = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
+
+        // The default version of Campaign.LoadCampaign uses functions that do what I'm about to do in a much simpler way,
+        // but they don't work here because I'm overwriting a level, which is not supposed to happen.
+        // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
+
+        Text.AddText(internalName, name, Array.Empty<string>());
         var description = new TextBlock()
         {
-            key = name,
+            key = internalName,
             values = Array.Empty<Il2CppSystem.Object>()
         };
         var goalSpec = new LevelGoalSpec()
         {
-            id = name,
+            id = internalName,
             description = description,
             isSubgoal = isSubgoal
         };
         curlevel.goals.Add(goalSpec);
 
         var goal = new Goal(GoalType.All);
-        goalInfos[curlevel.id][name] = goal;
-        return ProcessGoal(lines, start + 1, "", new(GoalType.All));
+        goalInfos[curlevel.id][internalName] = goal;
+        return goal;
+    }
+    static int AddGoal(string[] lines, int start, bool isSubgoal)
+    {
+        // Ignore the word "Goal" or "Subgoal" at the start of the line
+        string name = string.Join(' ', lines[start].Split().Skip(1));
+        return ProcessGoal(lines, start + 1, "", AddGoal(name, isSubgoal));
     }
     static void SetFrames(string frameString)
     {
@@ -149,8 +171,7 @@ internal class Utils
             case "Goal":
                 return AddGoal(lines, start, false);
             case "Subgoal":
-                AddGoal(string.Join(" ", line.Skip(1)), true);
-                return ProcessGoal(lines, start + 1, "");
+                return AddGoal(lines, start, true);
             case "Actor":
                 Campaign.AddActor(GetEnum<ActorId>(line[1]));
                 return start;
