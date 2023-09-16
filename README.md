@@ -5,7 +5,7 @@ This is a mod for the game Storyteller, to add the ability to load custom levels
 * Download the correct version of BepInEx. You will need Bleeding Edge #667 rather than the release version, for those who know what that means. The windows link is [here](https://builds.bepinex.dev/projects/bepinex_be/667/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.667%2B6b500b3.zip), the mac link is [here](https://builds.bepinex.dev/projects/bepinex_be/667/BepInEx-Unity.IL2CPP-macos-x64-6.0.0-be.667%2B6b500b3.zip).
 * Install BepInEx by following [these instructions](https://docs.bepinex.dev/articles/user_guide/installation/index.html). Ignore the bit at the start about about downloading, since you've already done that.
 * Download the latest version of this mod from [the releases page](https://github.com/plokmijnuhby/StorytellerCustomLevels/releases) (CustomLevels.dll, not the source code). Put it in the folder "BepInEx/plugins". Run the game, and the mod should load and create a folder called "custom_levels" in the game root. You can then add levels into this folder and they will immediately be detected by the mod.
-* This is not strictly necessary, but I recommend disabling the BepInEx console. To do this, open the config file, find the `Logging.Console` section, and change the line `Enabled = true` to `Enabled = false`, and save the file.
+* You may optionally choose to disable the BepInEx console. To do this, open the config file, find the `Logging.Console` section, and change the line `Enabled = true` to `Enabled = false`, and save the file.
 
 ## Making levels
 The level format consists of a series of commands. To explain the format, here's a sample level - you might recognise it:
@@ -35,6 +35,7 @@ The level consists of a series of commands in order. I will run through the poss
 * `WitchStartsHot` specifies that, if present, the witch should begin the story as a young woman.
 * `Goal <text>` specifies that a goal for the story should be present with the given text.
 * `Subgoal <text>` is as above, but a subgoal instead.
+* `Verbose` is a debugging feature, that causes all events to be logged to the console (if it was not disabled) when checking goals.
 
 To specify how goals or subgoals work, you will need to give a list of events that the goal is checking for, and the characters that need to be involved. For simple goals like the ones we see here, the goal will be completed only if all the events are found. All events can be specified in the form `<event> <source> <target>`, where `source` and `target` are actors. You can also specify that the any source or target is valid using None, so `Murders Ligeia None` implies that Isobel (who is internally called `Ligeia`) murdered someone, but it doesn't matter who. If you specify only one actor, this will be assumed to be the source and the target will be set to `None`, so `Murders Ligeia None` is equivalent to simply `Murders Ligeia`. If you specify no actors at all both will be taken as `None`.
 

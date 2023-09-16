@@ -25,6 +25,7 @@ internal class Utils
     static LevelSpec curlevel; 
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
+    static readonly Dictionary<LevelID, bool> verbose = new();
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
@@ -194,6 +195,9 @@ internal class Utils
             case "Music":
                 musicSources[curlevel.id] = GetEnum<LevelID>(line[1]);
                 return start;
+            case "Verbose":
+                verbose[curlevel.id] = true;
+                return start;
             default:
                 throw new InvalidOperationException("Unknown command: " + line[0]);
         }
@@ -207,6 +211,15 @@ internal class Utils
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {
+        if (verbose[spec.id])
+        {
+            Console.WriteLine("");
+            Console.WriteLine("Logging events:");
+            foreach (var storyEvent in story.events)
+            {
+                Console.WriteLine($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
+            }
+        }
         foreach (var (goalId, goal) in goalInfos[spec.id])
         {
             if (goal.CheckGoal(spec, story, 0) != -1)
@@ -223,6 +236,7 @@ internal class Utils
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
         goalInfos[id] = new();
+        verbose[id] = false;
         musicSources[id] = LevelID.Invalid;
 
         // The toolbox contains all the actors and settings.
@@ -285,6 +299,7 @@ internal class Utils
         chapter.levels.Clear();
         goalInfos.Clear();
         musicSources.Clear();
+        verbose.Clear();
         Campaign.curChapter = chapter;
         Campaign.chapterLevelNumber = 1;
 
