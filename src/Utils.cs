@@ -282,7 +282,8 @@ internal class Utils
                 levelId = id
             };
             pages.Insert(pages.Count - 1, page);
-
+            
+            // Load the level here so that save games work properly
             LoadLevel(id);
         }
     }
