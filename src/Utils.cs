@@ -96,67 +96,82 @@ internal class Utils
             witchStartsHot = true
         });
     }
-    static void Process(string[] line)
+    static int ProcessGoal(string[] lines, int start, string oldIndent)
     {
-        try
+        string indent = string.Concat(lines[start].TakeWhile(char.IsWhiteSpace));
+        if (!indent.StartsWith(oldIndent))
         {
-            switch (line[0])
+            return start - 1;
+        }
+        for (int i = start; i < lines.Length; i++)
+        {
+            string line = lines[i];
+            if (line.All(char.IsWhiteSpace))
             {
-                case "Frames":
-                    SetFrames(line[1]);
-                    break;
-                case "Goal":
-                    AddGoal(string.Join(" ", line.Skip(1)), false);
-                    break;
-                case "Subgoal":
-                    AddGoal(string.Join(" ", line.Skip(1)), true);
-                    break;
-                case "Actor":
-                    Campaign.AddActor(GetEnum<ActorId>(line[1]));
-                    break;
-                case "Setting":
-                    Campaign.AddSetting(GetEnum<Setting>(line[1]));
-                    break;
-                case "MarriageAloneIsSolitude":
-                    curlevel.marriageAloneIsSolitude = true;
-                    break;
-                case "WitchStartsHot":
-                    SetWitchStartsHot();
-                    break;
-                case "Music":
-                    musicSources[curlevel.id] = GetEnum<LevelID>(line[1]);
-                    break;
-                default:
-                    throw new InvalidOperationException("Unknown command: " + line[0]);
+                continue;
             }
+            if (!line.StartsWith(indent))
+            {
+                if (line.StartsWith(oldIndent))
+                {
+                    return i - 1;
+                }
+                throw new InvalidOperationException("Incorrect indentation in level file");
+            }
+            string[] lineParts = line[indent.Length..].Split();
+
+            var source = ActorId.None;
+            if (lineParts.Length > 1)
+            {
+                source = GetEnum<ActorId>(lineParts[1]);
+            }
+            var target = ActorId.None;
+            if (lineParts.Length > 2)
+            {
+                target = GetEnum<ActorId>(lineParts[2]);
+            }
+            var query = new Goal(GoalType.Event)
+            {
+                eventType = GetEnum<ET>(lineParts[0]),
+                source = source,
+                target = target
+            };
+            lastRootGoal.goals.Add(query);
         }
-        catch (IndexOutOfRangeException) {
-            throw new InvalidOperationException("Could not parse level file");
-        }
+        return lines.Length - 1;
     }
-    static void ProcessGoal(string[] line)
+    static int Process(string[] lines, int start)
     {
-        if (line.Length == 0)
+        string[] line = lines[start].Split();
+        switch (line[0])
         {
-            throw new InvalidOperationException("Could not parse level file");
+            case "Frames":
+                SetFrames(line[1]);
+                return start;
+            case "Goal":
+                AddGoal(string.Join(" ", line.Skip(1)), false);
+                return ProcessGoal(lines, start + 1, "");
+            case "Subgoal":
+                AddGoal(string.Join(" ", line.Skip(1)), true);
+                return ProcessGoal(lines, start + 1, "");
+            case "Actor":
+                Campaign.AddActor(GetEnum<ActorId>(line[1]));
+                return start;
+            case "Setting":
+                Campaign.AddSetting(GetEnum<Setting>(line[1]));
+                return start;
+            case "MarriageAloneIsSolitude":
+                curlevel.marriageAloneIsSolitude = true;
+                return start;
+            case "WitchStartsHot":
+                SetWitchStartsHot();
+                return start;
+            case "Music":
+                musicSources[curlevel.id] = GetEnum<LevelID>(line[1]);
+                return start;
+            default:
+                throw new InvalidOperationException("Unknown command: " + line[0]);
         }
-        var source = ActorId.None;
-        if (line.Length > 1)
-        {
-            source = GetEnum<ActorId>(line[1]);
-        }
-        var target = ActorId.None;
-        if (line.Length > 2)
-        {
-            target = GetEnum<ActorId>(line[2]);
-        }
-        var query = new Goal(GoalType.Event)
-        {
-            eventType = GetEnum<ET>(line[0]),
-            source = source,
-            target = target
-        };
-        lastRootGoal.goals.Add(query);
     }
     static void ReportError(string message)
     {
@@ -192,19 +207,15 @@ internal class Utils
 
         try
         {
-            foreach (var line in File.ReadAllLines(filePaths[id]))
+            var lines = File.ReadAllLines(filePaths[id]);
+            for (int i = 0; i < lines.Length; i++)
             {
-                if (line != "" && (line[0] == ' ' || line[0] == '\t'))
+                string line = lines[i];
+                if (!line.All(char.IsWhiteSpace))
                 {
-                    var trimmed_line = line.Trim();
-                    ProcessGoal(trimmed_line.Split(' '));
+                    i = Process(lines, i);
                 }
-                else if (line != "")
-                {
-                    var splitLine = line.Split(' ');
-                    Process(splitLine);
-                }
-            };
+            }
         }
         catch (InvalidOperationException ex)
         {
@@ -213,6 +224,10 @@ internal class Utils
         catch (IOException)
         {
             ReportError("Level file deleted, renamed, or otherwise inaccessible");
+        }
+        catch (IndexOutOfRangeException)
+        {
+            ReportError("Could not parse level file");
         }
         if (currentSubgoals != 0 && curlevel.frames == 8)
         {
