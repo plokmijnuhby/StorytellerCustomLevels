@@ -21,7 +21,7 @@ internal class Goal
     public ET eventType;
     public ActorId source;
     public ActorId target;
-    public List<Goal> goals = new();
+    public List<Goal> children = new();
 
     public Goal(GoalType type)
     {
@@ -57,7 +57,7 @@ internal class Goal
             case GoalType.Any:
             {
                 int end = -1;
-                foreach (var goal in goals)
+                foreach (var goal in children)
                 {
                     int found = goal.CheckGoal(spec, story, start);
                     if (end == -1)
@@ -74,7 +74,7 @@ internal class Goal
             case GoalType.All:
             {
                 int end = start;
-                foreach (var goal in goals)
+                foreach (var goal in children)
                 {
                     int found = goal.CheckGoal(spec, story, start);
                     if (found == -1)
@@ -88,7 +88,7 @@ internal class Goal
             case GoalType.Sequence:
             {
                 int end = start;
-                foreach (var goal in goals)
+                foreach (var goal in children)
                 {
                     end = goal.CheckGoal(spec, story, end);
                     if (end == -1)

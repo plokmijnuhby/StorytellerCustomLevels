@@ -50,7 +50,7 @@ internal class Utils
     static int ProcessGoal(string[] lines, int start, string oldIndent, Goal root)
     {
         string indent = string.Concat(lines[start].TakeWhile(char.IsWhiteSpace));
-        if (!indent.StartsWith(oldIndent))
+        if (!indent.StartsWith(oldIndent) || indent == oldIndent)
         {
             return start - 1;
         }
@@ -88,7 +88,7 @@ internal class Utils
                 goal = new Goal(type);
                 i = ProcessGoal(lines, i + 1, indent, goal);
             }
-            root.goals.Add(goal);
+            root.children.Add(goal);
         }
         return lines.Length - 1;
     }
