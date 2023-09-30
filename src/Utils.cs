@@ -204,7 +204,7 @@ internal class Utils
         SetFrames("3");
         curlevel.toolbox.Clear();
         curlevel.goals.Clear();
-        AddGoal("ERROR: " + message, false);
+        AddGoal("ERROR: " + message, GoalType.Main);
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {
