@@ -29,7 +29,7 @@ internal class Utils
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
-    static Goal ProcessEventGoal(string[] line, GoalType type)
+    static Goal ProcessEventGoal(string[] line, CustomGoalType type)
     {
         var source = ActorId.None;
         if (line.Length > 1)
@@ -68,21 +68,21 @@ internal class Utils
             }
             string[] lineParts = line[indent.Length..].Split();
 
-            GoalType type = GoalType.Invalid;
+            CustomGoalType type = CustomGoalType.Invalid;
             Goal goal = null;
             try
             {
-                type = GetEnum<GoalType>(lineParts[0]);
+                type = GetEnum<CustomGoalType>(lineParts[0]);
             }
             catch (InvalidOperationException) { }
 
-            if (type == GoalType.Without)
+            if (type == CustomGoalType.Without)
             {
                 goal = ProcessEventGoal(lineParts[1..], type);
             }
-            else if (type == GoalType.Invalid)
+            else if (type == CustomGoalType.Invalid)
             {
-                goal = ProcessEventGoal(lineParts, GoalType.Event);
+                goal = ProcessEventGoal(lineParts, CustomGoalType.Event);
             }
             else
             {
@@ -93,9 +93,9 @@ internal class Utils
         }
         return lines.Length - 1;
     }
-    static Goal AddGoal(string name, bool isSubgoal)
+    static Goal AddGoal(string name, GoalType goalType)
     {
-        if (isSubgoal)
+        if (goalType == GoalType.Subgoal)
         {
             if (currentSubgoals == 3)
             {
@@ -116,15 +116,15 @@ internal class Utils
             key = internalName,
             values = Array.Empty<Il2CppSystem.Object>()
         };
-        var goalSpec = new LevelGoalSpec()
+        var goalSpec = new GoalSpec()
         {
             id = internalName,
             description = description,
-            isSubgoal = isSubgoal
+            type = goalType
         };
         curlevel.goals.Add(goalSpec);
 
-        var goal = new Goal(GoalType.All);
+        var goal = new Goal(CustomGoalType.All);
         goalInfos[curlevel.id][internalName] = goal;
         return goal;
     }

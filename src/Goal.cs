@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CustomLevels;
 
-internal enum GoalType
+internal enum CustomGoalType
 {
     Invalid,
     Event,
@@ -17,13 +17,13 @@ internal enum GoalType
 
 internal class Goal
 {
-    public GoalType type;
+    public CustomGoalType type;
     public ET eventType;
     public ActorId source;
     public ActorId target;
     public List<Goal> children = new();
 
-    public Goal(GoalType type)
+    public Goal(CustomGoalType type)
     {
         this.type = type;
     }
@@ -32,7 +32,7 @@ internal class Goal
     {
         switch (type)
         {
-            case GoalType.Event:
+            case CustomGoalType.Event:
             {
                 for (int i = start; i < spec.frames; i++)
                 {
@@ -43,7 +43,7 @@ internal class Goal
                 }
                 return -1;
             }
-            case GoalType.Without:
+            case CustomGoalType.Without:
             {
                 for (int i = 0; i < spec.frames; i++)
                 {
@@ -54,7 +54,7 @@ internal class Goal
                 }
                 return start;
             }
-            case GoalType.Any:
+            case CustomGoalType.Any:
             {
                 int end = -1;
                 foreach (var goal in children)
@@ -71,7 +71,7 @@ internal class Goal
                 }
                 return end;
             }
-            case GoalType.All:
+            case CustomGoalType.All:
             {
                 int end = start;
                 foreach (var goal in children)
@@ -85,7 +85,7 @@ internal class Goal
                 }
                 return end;
             }
-            case GoalType.Sequence:
+            case CustomGoalType.Sequence:
             {
                 int end = start;
                 foreach (var goal in children)
