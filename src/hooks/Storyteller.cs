@@ -23,7 +23,7 @@ internal class Storyteller_LoadBookPages
             chapterId = "custom_levels"
         };
         var pages = __instance.pages;
-        pages.Insert(pages.Count, indexPage);
+        pages.Insert(pages.Count - 4, indexPage);
 
         Utils.customChapter = chapter;
         Utils.LoadChapter();

@@ -288,7 +288,7 @@ internal class Utils
         else
         {
             // Not the first time, so we must remove the pages we added last time
-            pages.RemoveRange(normalPages, pages.Count - normalPages);
+            pages.RemoveRange(normalPages - 4, pages.Count - normalPages);
         }
 
         filePaths.Clear();
@@ -320,7 +320,7 @@ internal class Utils
                 type = PageType.Level,
                 levelId = id
             };
-            pages.Insert(pages.Count, page);
+            pages.Insert(pages.Count - 4, page);
             
             // Load the level here so that save games work properly
             LoadLevel(id);
