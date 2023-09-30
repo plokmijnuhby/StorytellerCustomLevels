@@ -22,12 +22,13 @@ internal class Utils
     };
     static int currentSubgoals = 0;
     static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
-    static LevelSpec curlevel; 
+    static LevelSpec curlevel;
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
     static readonly Dictionary<LevelID, bool> verbose = new();
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
+    public static Chapter customChapter;
 
     static Goal ProcessEventGoal(string[] line, CustomGoalType type)
     {
@@ -275,10 +276,8 @@ internal class Utils
     }
 
 
-    public static void LoadChapter(Chapter chapter)
+    public static void LoadChapter()
     {
-        // Note: We want to insert all pages before the final page (the epilogue).
-
         var pages = Storyteller.game.pages;
         if (normalPages == -1)
         {
@@ -288,15 +287,15 @@ internal class Utils
         else
         {
             // Not the first time, so we must remove the pages we added last time
-            pages.RemoveRange(normalPages - 1, pages.Count - normalPages);
+            pages.RemoveRange(normalPages, pages.Count - normalPages);
         }
 
         filePaths.Clear();
-        chapter.levels.Clear();
+        customChapter.levels.Clear();
         goalInfos.Clear();
         musicSources.Clear();
         verbose.Clear();
-        Campaign.curChapter = chapter;
+        Campaign.curChapter = customChapter;
         Campaign.chapterLevelNumber = 1;
 
         if (!Directory.Exists("./custom_levels"))
@@ -320,7 +319,7 @@ internal class Utils
                 type = PageType.Level,
                 levelId = id
             };
-            pages.Insert(pages.Count - 1, page);
+            pages.Insert(pages.Count, page);
             
             // Load the level here so that save games work properly
             LoadLevel(id);

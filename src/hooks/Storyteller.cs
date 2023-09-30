@@ -12,9 +12,10 @@ internal class Storyteller_LoadBookPages
         // illustration_marco is a blank illustration, seen on the left of the list of levels.
         Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_marco");
         var chapter = Campaign.curChapter;
+        chapter.excludeFromTesting = true;
         Campaign.EndChapter();
 
-        // Add an index for the chapter (ie a list of levels)
+        // Add an index for the customChapter (ie a list of levels)
         var indexPage = new PageSpec()
         {
             id = "chapter_custom_levels",
@@ -22,12 +23,13 @@ internal class Storyteller_LoadBookPages
             chapterId = "custom_levels"
         };
         var pages = __instance.pages;
-        pages.Insert(pages.Count - 1, indexPage);
+        pages.Insert(pages.Count, indexPage);
 
-        Utils.LoadChapter(chapter);
+        Utils.customChapter = chapter;
+        Utils.LoadChapter();
     }
 }
-
+/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
 {
@@ -42,11 +44,11 @@ internal class Storyteller_UpdateSavegameCache
         int solvedJesterGoals = 0;
         int firstChapterWithUnsolvedMainGoals = -1;
 
-        // We ignore the chapter that we added
+        // We ignore the customChapter that we added
         Chapter[] chapters = Campaign.chapters.ToArray();
-        foreach (var chapter in chapters[..^1])
+        foreach (var customChapter in chapters[..^1])
         {
-            foreach (var level in chapter.levels)
+            foreach (var level in customChapter.levels)
             {
                 foreach (var goal in Campaign.levelSpecs[level.id].goals)
                 {
@@ -73,7 +75,7 @@ internal class Storyteller_UpdateSavegameCache
                     }
                     else if (firstChapterWithUnsolvedMainGoals == -1 && !goal.isSubgoal)
                     {
-                        firstChapterWithUnsolvedMainGoals = Array.IndexOf(chapters, chapter);
+                        firstChapterWithUnsolvedMainGoals = Array.IndexOf(chapters, customChapter);
                     }
                 }
             }
@@ -87,3 +89,4 @@ internal class Storyteller_UpdateSavegameCache
         return false;
     }
 }
+*/
