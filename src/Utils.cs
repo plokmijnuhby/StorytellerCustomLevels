@@ -238,7 +238,6 @@ internal class Utils
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
-        curlevel.marriageAloneIsSolitude = false;
 
         try
         {
