@@ -51,7 +51,7 @@ internal class Utils
     }
     static int ProcessGoal(string[] lines, int start, string oldIndent, Goal root)
     {
-        if (lines.Length < start) return start - 1;
+        if (lines.Length <= start) return start - 1;
         string indent = string.Concat(lines[start].TakeWhile(char.IsWhiteSpace));
         if (!indent.StartsWith(oldIndent) || indent == oldIndent)
         {
