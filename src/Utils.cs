@@ -12,13 +12,13 @@ internal class Utils
     {
         // Unused levels, can be overwritten relatively safely.
         // We can only have 7 or we'll run out of space to display them.
-        LevelID.Trailer_Reunion,
-        LevelID.Trailer_Reunion2,
-        LevelID.Trailer_Suitors,
-        LevelID.Trailer_Mystery,
-        LevelID.Trailer_Monster,
-        LevelID.Trailer_Beauty,
-        LevelID.Trailer_Death
+        LevelID.GenesisSandbox,
+        LevelID.DwarfSandbox,
+        LevelID.CrownSandbox,
+        LevelID.DwarfSandbox,
+        LevelID.VampireSandbox,
+        LevelID.MansionSandbox,
+        LevelID.GothicSandbox
     };
     static int currentSubgoals = 0;
     static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
