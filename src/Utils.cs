@@ -128,11 +128,11 @@ internal class Utils
         goalInfos[curlevel.id][internalName] = goal;
         return goal;
     }
-    static int AddGoal(string[] lines, int start, bool isSubgoal)
+    static int AddGoal(string[] lines, int start, GoalType goalType)
     {
         // Ignore the word "Goal" or "Subgoal" at the start of the line
         string name = string.Join(' ', lines[start].Split().Skip(1));
-        return ProcessGoal(lines, start + 1, "", AddGoal(name, isSubgoal));
+        return ProcessGoal(lines, start + 1, "", AddGoal(name, goalType));
     }
     static void SetFrames(string frameString)
     {
