@@ -177,17 +177,14 @@ internal class Utils
                 SetFrames(line[1]);
                 return start;
             case "Goal":
-                return AddGoal(lines, start, false);
+                return AddGoal(lines, start, GoalType.Main);
             case "Subgoal":
-                return AddGoal(lines, start, true);
+                return AddGoal(lines, start, GoalType.Subgoal);
             case "Actor":
                 Campaign.AddActor(GetEnum<ActorId>(line[1]));
                 return start;
             case "Setting":
                 Campaign.AddSetting(GetEnum<Setting>(line[1]));
-                return start;
-            case "MarriageAloneIsSolitude":
-                curlevel.marriageAloneIsSolitude = true;
                 return start;
             case "WitchStartsHot":
                 SetWitchStartsHot();
