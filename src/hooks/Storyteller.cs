@@ -19,7 +19,7 @@ internal class Storyteller_LoadBookPages
         {
             id = "chapter_custom_levels",
             type = PageType.Index,
-            chapter = chapter
+            chapterId = "custom_levels"
         };
         var pages = __instance.pages;
         pages.Insert(pages.Count - 1, indexPage);
