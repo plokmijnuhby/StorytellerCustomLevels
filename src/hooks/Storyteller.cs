@@ -31,7 +31,8 @@ internal class Storyteller_LoadBookPages
 
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
-{    static void Postfix(Storyteller __instance)
+{
+    static void Postfix(Storyteller __instance)
     {
         // The savegame cache statistics control whether the crown is unlocked.
         // We want our levels to be ignored when checking this,
