@@ -15,10 +15,10 @@ internal class Utils
         LevelID.GenesisSandbox,
         LevelID.DwarfSandbox,
         LevelID.CrownSandbox,
-        LevelID.DwarfSandbox,
         LevelID.VampireSandbox,
         LevelID.MansionSandbox,
-        LevelID.GothicSandbox
+        LevelID.GothicSandbox,
+        LevelID.DogSandbox
     };
     static int currentSubgoals = 0;
     static LevelSpec curlevel;
