@@ -37,8 +37,6 @@ internal class Storyteller_UpdateSavegameCache
         // We want our levels to be ignored when checking this,
         // so we undo the effect they had on the basegame levels.
         var savegameCache = __instance.savegameCache;
-        Console.WriteLine(savegameCache.totalMainGoals);
-        Console.WriteLine(savegameCache.totalSubgoals);
         foreach (var levelEntry in Utils.customChapter.levels)
         {
             var levelId = levelEntry.id;
