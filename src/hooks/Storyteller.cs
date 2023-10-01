@@ -12,7 +12,6 @@ internal class Storyteller_LoadBookPages
         // illustration_marco is a blank illustration, seen on the left of the list of levels.
         Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_marco");
         var chapter = Campaign.curChapter;
-        chapter.excludeFromTesting = true;
         Campaign.EndChapter();
 
         // Add an index for the customChapter (ie a list of levels)
@@ -29,64 +28,49 @@ internal class Storyteller_LoadBookPages
         Utils.LoadChapter();
     }
 }
-/*
+
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
-{
-    // This must be patched to make the crown work correctly.
-    // My approach is to completely override this function and implement it myself.
-    // "Jester goal" is another term for a subgoal.
-    static bool Prefix(Storyteller __instance)
+{    static void Postfix(Storyteller __instance)
     {
-        int mainGoalCount = 0;
-        int solvedMainGoals = 0;
-        int jesterGoalCount = 0;
-        int solvedJesterGoals = 0;
-        int firstChapterWithUnsolvedMainGoals = -1;
-
-        // We ignore the customChapter that we added
-        Chapter[] chapters = Campaign.chapters.ToArray();
-        foreach (var customChapter in chapters[..^1])
+        // The savegame cache statistics control whether the crown is unlocked.
+        // We want our levels to be ignored when checking this,
+        // so we undo the effect they had on the basegame levels.
+        var savegameCache = __instance.savegameCache;
+        Console.WriteLine(savegameCache.totalMainGoals);
+        Console.WriteLine(savegameCache.totalSubgoals);
+        foreach (var levelEntry in Utils.customChapter.levels)
         {
-            foreach (var level in customChapter.levels)
+            var levelId = levelEntry.id;
+            bool levelSolved = true;
+            foreach (var goalSpec in Campaign.levelSpecs[levelId].goals)
             {
-                foreach (var goal in Campaign.levelSpecs[level.id].goals)
+                bool goalSolved = __instance.savegame.IsGoalSolved(levelId, goalSpec.id);
+                if (goalSpec.type == GoalType.Main)
                 {
-                    if (goal.isSubgoal)
+                    savegameCache.totalMainGoals -= 1;
+                    if (goalSolved)
                     {
-                        jesterGoalCount++;
-                    }
-                    else
-                    {
-                        mainGoalCount++;
-                    }
-
-
-                    if (__instance.savegame.IsGoalSolved(level.id, goal.id))
-                    {
-                        if (goal.isSubgoal)
-                        {
-                            solvedJesterGoals++;
-                        }
-                        else
-                        {
-                            solvedMainGoals++;
-                        }
-                    }
-                    else if (firstChapterWithUnsolvedMainGoals == -1 && !goal.isSubgoal)
-                    {
-                        firstChapterWithUnsolvedMainGoals = Array.IndexOf(chapters, customChapter);
+                        savegameCache.solvedMainGoals -= 1;
                     }
                 }
+                else
+                {
+                    savegameCache.totalSubgoals -= 1;
+                    if (goalSolved)
+                    {
+                        savegameCache.solvedSubgoals -= 1;
+                    }
+                }
+                if (!goalSolved)
+                {
+                    levelSolved = false;
+                }
+            }
+            if (levelSolved)
+            {
+                savegameCache.solvedLevels -= 1;
             }
         }
-        var savegameCache = __instance.savegameCache;
-        savegameCache.mainGoalCount = mainGoalCount;
-        savegameCache.solvedMainGoals = solvedMainGoals;
-        savegameCache.jesterGoalCount = jesterGoalCount;
-        savegameCache.solvedJesterGoals = solvedJesterGoals;
-        savegameCache.firstChapterWithUnsolvedMainGoals = firstChapterWithUnsolvedMainGoals;
-        return false;
     }
 }
-*/

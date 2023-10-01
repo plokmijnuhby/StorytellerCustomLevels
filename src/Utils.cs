@@ -21,13 +21,13 @@ internal class Utils
         LevelID.GothicSandbox
     };
     static int currentSubgoals = 0;
-    static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     static LevelSpec curlevel;
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
     static readonly Dictionary<LevelID, bool> verbose = new();
 
     public static readonly Dictionary<LevelID, LevelID> musicSources = new();
+    public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static Chapter customChapter;
 
     static Goal ProcessEventGoal(string[] line, CustomGoalType type)
@@ -274,6 +274,7 @@ internal class Utils
 
         Campaign.End();
         Campaign.goalDescriptions.Clear();
+        Storyteller.game.VerifyClaimedSolutionsToLevel(id);
     }
 
 
@@ -325,5 +326,6 @@ internal class Utils
             // Load the level here so that save games work properly
             LoadLevel(id);
         }
+        Storyteller.game.UpdateSavegameCache();
     }
 }
