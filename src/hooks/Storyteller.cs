@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System;
 
 namespace CustomLevels.hooks;
 
@@ -44,6 +43,8 @@ internal class Storyteller_UpdateSavegameCache
         }
         foreach (var levelEntry in Utils.customChapter.levels)
         {
+            savegameCache.totalLevels -= 1;
+
             var levelId = levelEntry.id;
             bool levelSolved = true;
             foreach (var goalSpec in Campaign.levelSpecs[levelId].goals)
