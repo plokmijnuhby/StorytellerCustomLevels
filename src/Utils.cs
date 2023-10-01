@@ -325,7 +325,7 @@ internal class Utils
         {
             filePaths[id] = file;
             var name = Path.GetFileNameWithoutExtension(file);
-            Campaign.AddLevel(name.Replace('_', ' '), id);
+            Campaign.AddLevel(name.Split(null, 2).Last().Replace('_', ' '), id);
 
             var page = new PageSpec()
             {
