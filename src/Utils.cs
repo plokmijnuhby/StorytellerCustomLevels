@@ -22,12 +22,13 @@ internal class Utils
     };
     static int currentSubgoals = 0;
     static LevelSpec curlevel;
-    static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
     static readonly Dictionary<LevelID, bool> verbose = new();
     static readonly Dictionary<LevelID, LevelID> musicSources = new();
+
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static Chapter customChapter;
+    public static int normalPages = -1;
 
     static T GetEnum<T>(string name) where T : struct
     {

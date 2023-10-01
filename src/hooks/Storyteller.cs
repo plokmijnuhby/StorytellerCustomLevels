@@ -38,6 +38,10 @@ internal class Storyteller_UpdateSavegameCache
         // We want our levels to be ignored when checking this,
         // so we undo the effect they had on the basegame levels.
         var savegameCache = __instance.savegameCache;
+        if (savegameCache.firstIndexPageWithUnsolvedLevels == Utils.normalPages - 5)
+        {
+            savegameCache.firstIndexPageWithUnsolvedLevels = -1;
+        }
         foreach (var levelEntry in Utils.customChapter.levels)
         {
             var levelId = levelEntry.id;
