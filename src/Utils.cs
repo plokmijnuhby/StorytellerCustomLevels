@@ -25,11 +25,33 @@ internal class Utils
     static int normalPages = -1;
     static readonly Dictionary<LevelID, string> filePaths = new();
     static readonly Dictionary<LevelID, bool> verbose = new();
-
-    public static readonly Dictionary<LevelID, LevelID> musicSources = new();
+    static readonly Dictionary<LevelID, LevelID> musicSources = new();
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static Chapter customChapter;
 
+    static T GetEnum<T>(string name) where T : struct
+    {
+        if (Enum.TryParse(name, true, out T result))
+        {
+            return result;
+        }
+        else
+        {
+            throw new InvalidOperationException($"Argument {name} was not a valid value");
+        }
+    }
+    public static string FixMusic(string id)
+    {
+        if (id.StartsWith("music_"))
+        {
+            bool isLevel = Enum.TryParse(id["music_".Length..], true, out LevelID levelID);
+            if (isLevel && musicSources.TryGetValue(levelID, out LevelID newLevelID))
+            {
+                return "music_" + newLevelID.ToString().ToLowerInvariant();
+            }
+        }
+        return id;
+    }
     static Goal ProcessEventGoal(string[] line, CustomGoalType type)
     {
         var source = ActorId.None;
@@ -150,17 +172,6 @@ internal class Utils
         // The settings that are in place at the start of the level.
         // Used for some tutorials, but here we can just leave them as the default Setting.Empty.
         curlevel.startingSettings = new Setting[frames];
-    }
-    static T GetEnum<T>(string name) where T : struct
-    {
-        if (Enum.TryParse(name, true, out T result))
-        {
-            return result;
-        }
-        else
-        {
-            throw new InvalidOperationException($"Argument {name} was not a valid value");
-        }
     }
     static void SetWitchStartsHot()
     {

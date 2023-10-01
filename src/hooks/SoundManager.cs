@@ -1,17 +1,21 @@
 ﻿using HarmonyLib;
+using System;
 
 namespace CustomLevels.hooks;
 
-[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PlayMusicById))]
-internal class SoundManager_PlayMusicForLevel
+[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.HasClipsFor))]
+internal class SoundManager_HasClipsFor
 {
-    static void Prefix(string id, bool forceRestart)
+    static void Prefix(ref string id)
     {
-        System.Console.WriteLine(id);
-        /*if (Utils.musicSources.ContainsKey(levelId))
-        {
-            Utils.LoadLevel(levelId);
-            levelId = Utils.musicSources[levelId];
-        }*/
+        id = Utils.FixMusic(id);
+    }
+}
+[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PlayMusicById))]
+internal class SoundManager_PlayMusicById
+{
+    static void Prefix(ref string id)
+    {
+        id = Utils.FixMusic(id);
     }
 }
