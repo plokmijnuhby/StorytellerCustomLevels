@@ -2,8 +2,8 @@ Frames 6
 Music EpilogueBaronVsWerewolf
 Goal Monster is Slain
   ANY
-    DiedBy Bernard
-    DiedBy Baron
+    Died Bernard
+    Died Baron
 Setting Moon
 Setting Disguise
 Setting Forest

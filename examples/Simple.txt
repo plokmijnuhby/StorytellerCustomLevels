@@ -1,11 +1,11 @@
 Frames 6
 Music OthelloLigeia
-Goal Isobel Commits a Crime
+Goal Murder of Jealousy
     Murders Ligeia None
 Subgoal but everyone meets their demise
-    DiedBy Edgar
-    DiedBy Eleonora
-    DiedBy Ligeia
+    Died Edgar
+    Died Eleonora
+    Died Ligeia
 Setting Marriage
 Setting Poison
 Setting Study

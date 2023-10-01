@@ -1,9 +1,9 @@
 Frames 6
 Music Stockholm
 Goal Peachy is Last Alive
-    DiedBy Dwarfi
-    DiedBy Dwarfo
-    WITHOUT DiedBy Dwarfa
+    Died Dwarfi
+    Died Dwarfo
+    WITHOUT Died Dwarfa
 Setting Fight
 Setting Dungeon
 Setting Cliff
