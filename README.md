@@ -38,7 +38,7 @@ The level consists of a series of commands in order. I will run through the poss
 
 To specify how goals or subgoals work, you will need to give a list of events that the goal is checking for, and the characters that need to be involved. For simple goals like the ones we see here, the goal will be completed only if all the events are found. All events can be specified in the form `<event> <source> <target>`, where `source` and `target` are actors. You can also specify that the any source or target is valid using None, so `Murders Ligeia None` implies that Isobel (who is internally called `Ligeia`) murdered someone, but it doesn't matter who. If you specify only one actor, this will be assumed to be the source and the target will be set to `None`, so `Murders Ligeia None` is equivalent to simply `Murders Ligeia`. If you specify no actors at all both will be taken as `None`.
 
-For some events, like `Died` in this example, only one actor is involved. In this case, it will be as if the source and the target are the same.
+For some events, like `Idling`, only one actor is involved. In this case, it will be as if the source and the target are the same.
 
 There are four commands that can affect the way goals are checked - `SEQUENCE`, `ALL`, `ANY` and `WITHOUT`. The `SEQUENCE` command specifies that events must occur in the order specified; the `ALL` command specifies that all events must occur, in any order; the `ANY` command specifies that only one of the given events needs to occur; and the WITHOUT command specifies that the event must NOT occur at any point. To understand these, it's best to look at [the example levels](./examples).
 
