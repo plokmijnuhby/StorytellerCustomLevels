@@ -324,8 +324,9 @@ internal class Utils
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
         {
             filePaths[id] = file;
-            var name = Path.GetFileNameWithoutExtension(file);
-            Campaign.AddLevel(name.Split(null, 2).Last().Replace('_', ' '), id);
+            string name = Path.GetFileNameWithoutExtension(file);
+            name = name.Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries).Last();
+            Campaign.AddLevel(name.Replace('_', ' '), id);
 
             var page = new PageSpec()
             {
