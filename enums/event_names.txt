@@ -1,4 +1,5 @@
 None
+CaresAbout
 Idling
 Sees
 KnocksCane
@@ -89,6 +90,7 @@ BelievesEatingApplesGetYouKilledBy
 InvestigatesCorpse
 DisgustedBy
 RottingInDungeon
+PonderingAbout
 PonderingMurder
 GloatingAt
 HidesGunBehindBack
