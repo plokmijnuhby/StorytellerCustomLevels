@@ -28,6 +28,27 @@ internal class Storyteller_LoadBookPages
     }
 }
 
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
+internal class Storyteller_ComputeSolvedRatioForSlot
+{
+    // This method is used to determine completion percentage.
+    // We delete the levels while the method is running, and immediately add them back afterwards.
+
+    static Il2CppSystem.Collections.Generic.List<ChapterLevelEntry> levels;
+
+    static void Prefix()
+    {
+        levels = Utils.customChapter.levels;
+        Utils.customChapter.levels = new();
+    }
+
+    static void Finalizer()
+    {
+        Utils.customChapter.levels = levels;
+        levels = null;
+    }
+}
+
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
 {
