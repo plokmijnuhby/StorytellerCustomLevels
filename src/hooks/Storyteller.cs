@@ -31,7 +31,7 @@ internal class Storyteller_LoadBookPages
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
 {
-    // This method is used to determine completion percentage.
+    // This method is used to determine completion percentage. 
     // We delete the levels while the method is running, and immediately add them back afterwards.
 
     static Il2CppSystem.Collections.Generic.List<ChapterLevelEntry> levels;
@@ -64,37 +64,17 @@ internal class Storyteller_UpdateSavegameCache
         }
         foreach (var levelEntry in Utils.customChapter.levels)
         {
-            savegameCache.totalLevels -= 1;
+            savegameCache.totalCrownLevels -= 1;
 
             var levelId = levelEntry.id;
             bool levelSolved = true;
             foreach (var goalSpec in Campaign.levelSpecs[levelId].goals)
             {
-                bool goalSolved = __instance.savegame.IsGoalSolved(levelId, goalSpec.id);
-                if (goalSpec.type == GoalType.Main)
-                {
-                    savegameCache.totalMainGoals -= 1;
-                    if (goalSolved)
-                    {
-                        savegameCache.solvedMainGoals -= 1;
-                    }
-                }
-                else
-                {
-                    savegameCache.totalSubgoals -= 1;
-                    if (goalSolved)
-                    {
-                        savegameCache.solvedSubgoals -= 1;
-                    }
-                }
-                if (!goalSolved)
-                {
-                    levelSolved = false;
-                }
+                levelSolved &= __instance.savegame.IsGoalSolved(levelId, goalSpec.id);
             }
             if (levelSolved)
             {
-                savegameCache.solvedLevels -= 1;
+                savegameCache.solvedCrownLevels -= 1;
             }
         }
     }
