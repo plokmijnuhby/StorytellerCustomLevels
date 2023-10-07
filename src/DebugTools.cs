@@ -33,4 +33,12 @@ internal class DebugTools
         }
         RenderTexture.active = prevRender;
     }
+
+    public static void DumpAllEnums()
+    {
+        foreach(var type in new Type[] { typeof(ActorId), typeof(ET), typeof(LevelID), typeof(Setting) })
+        {
+            File.WriteAllLines("enums/" + type.Name, Enum.GetNames(type));
+        }
+    }
 }
