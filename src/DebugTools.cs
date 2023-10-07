@@ -38,7 +38,7 @@ internal class DebugTools
     {
         foreach(var type in new Type[] { typeof(ActorId), typeof(ET), typeof(LevelID), typeof(Setting) })
         {
-            File.WriteAllLines("enums/" + type.Name, Enum.GetNames(type));
+            File.WriteAllLines($"enums/{type.Name}.txt", Enum.GetNames(type));
         }
     }
 }
