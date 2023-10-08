@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace CustomLevels;
@@ -34,11 +36,17 @@ internal class DebugTools
         RenderTexture.active = prevRender;
     }
 
-    public static void DumpAllEnums()
+    public static void DumpEnums()
     {
-        foreach(var type in new Type[] { typeof(ActorId), typeof(ET), typeof(LevelID), typeof(Setting) })
+        var enums = new Dictionary<string, Type> {
+            { "actor_names", typeof(ActorId) },
+            { "event_names", typeof(ET) },
+            { "level_names", typeof(LevelID) },
+            { "setting_names", typeof(Setting) }
+        };
+        foreach(var (file, type) in enums)
         {
-            File.WriteAllLines($"enums/{type.Name}.txt", Enum.GetNames(type));
+            File.WriteAllLines($"enums/{file}.txt", Enum.GetNames(type));
         }
     }
 }
