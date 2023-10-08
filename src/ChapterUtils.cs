@@ -48,9 +48,16 @@ internal class ChapterUtils
         }
 
         chapterPaths = Directory.GetDirectories("./custom_levels");
-        Array.Sort(chapterPaths);
-
-        var files = Directory.GetFiles(chapterPaths[0], "*.txt");
+        string[] files;
+        if (chapterPaths.Length == 0)
+        {
+            files = Directory.GetFiles("./custom_levels", "*.txt");
+        }
+        else
+        {
+            Array.Sort(chapterPaths);
+            files = Directory.GetFiles(chapterPaths[0], "*.txt");
+        }
         Array.Sort(files);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
         {
