@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CustomLevels;
 
-internal class Utils
+internal class LevelUtils
 {
     static readonly LevelID[] allowedIDs = new LevelID[]
     {
@@ -22,13 +22,11 @@ internal class Utils
     };
     static int currentSubgoals = 0;
     static LevelSpec curlevel;
-    static readonly Dictionary<LevelID, string> filePaths = new();
     static readonly Dictionary<LevelID, bool> verbose = new();
     static readonly Dictionary<LevelID, LevelID> musicSources = new();
 
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
-    public static Chapter customChapter;
-    public static int normalPages = -1;
+    public static readonly Dictionary<LevelID, string> filePaths = new();
 
     static T GetEnum<T>(string name) where T : struct
     {
@@ -239,6 +237,13 @@ internal class Utils
             }
         }
     }
+    public static void ClearLevelData()
+    {
+        filePaths.Clear();
+        goalInfos.Clear();
+        musicSources.Clear();
+        verbose.Clear();
+    }
     public static void LoadLevel(LevelID id)
     {
         if (!allowedIDs.Contains(id)) return;
@@ -287,58 +292,5 @@ internal class Utils
         Campaign.End();
         Campaign.goalDescriptions.Clear();
         Storyteller.game.VerifyClaimedSolutionsToLevel(id);
-    }
-
-
-    public static void LoadChapter()
-    {
-        var pages = Storyteller.game.pages;
-        if (normalPages == -1)
-        {
-            // First time running this function, therefore levels haven't been loaded in yet
-            normalPages = pages.Count;
-        }
-        else
-        {
-            // Not the first time, so we must remove the pages we added last time
-            pages.RemoveRange(normalPages - 4, pages.Count - normalPages);
-        }
-
-        filePaths.Clear();
-        customChapter.levels.Clear();
-        goalInfos.Clear();
-        musicSources.Clear();
-        verbose.Clear();
-        Campaign.curChapter = customChapter;
-        Campaign.chapterLevelNumber = 1;
-
-        if (!Directory.Exists("./custom_levels"))
-        {
-            Directory.CreateDirectory("./custom_levels");
-            // Obviously there won't be any levels in the directory in this case
-            return;
-        }
-
-        var files = Directory.GetFiles("./custom_levels", "*.txt");
-        Array.Sort(files);
-        foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
-        {
-            filePaths[id] = file;
-            string name = Path.GetFileNameWithoutExtension(file);
-            name = name.Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries).Last();
-            Campaign.AddLevel(name.Replace('_', ' '), id);
-
-            var page = new PageSpec()
-            {
-                id = "level_" + name,
-                type = PageType.Level,
-                levelId = id
-            };
-            pages.Insert(pages.Count - 4, page);
-            
-            // Load the level here so that save games work properly
-            LoadLevel(id);
-        }
-        Storyteller.game.UpdateSavegameCache();
     }
 }

@@ -7,7 +7,7 @@ internal class SoundManager_HasClipsFor
 {
     static void Prefix(ref string id)
     {
-        id = Utils.FixMusic(id);
+        id = LevelUtils.FixMusic(id);
     }
 }
 [HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PlayMusicById))]
@@ -15,6 +15,6 @@ internal class SoundManager_PlayMusicById
 {
     static void Prefix(ref string id)
     {
-        id = Utils.FixMusic(id);
+        id = LevelUtils.FixMusic(id);
     }
 }

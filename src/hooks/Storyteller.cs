@@ -23,11 +23,11 @@ internal class Storyteller_LoadBookPages
         var pages = __instance.pages;
         pages.Insert(pages.Count - 4, indexPage);
 
-        Utils.customChapter = chapter;
-        Utils.LoadChapter();
+        ChapterUtils.customChapter = chapter;
+        ChapterUtils.LoadChapter();
     }
 }
-
+/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
 {
@@ -79,3 +79,4 @@ internal class Storyteller_UpdateSavegameCache
         }
     }
 }
+*/
