@@ -6,27 +6,22 @@ namespace CustomLevels.hooks;
 internal class Storyteller_LoadBookPages
 {
     // This function is only ever called once, when the game first loads.
-    static void Postfix(Storyteller __instance)
+    static void Postfix()
     {
-        // illustration_marco is a blank illustration, seen on the left of the list of levels.
-        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_marco");
-        var chapter = Campaign.curChapter;
-        Campaign.EndChapter();
-
-        // Add an index for the customChapter (ie a list of levels)
-        var indexPage = new PageSpec()
-        {
-            id = "chapter_custom_levels",
-            type = PageType.Index,
-            chapterId = "custom_levels"
-        };
-        var pages = __instance.pages;
-        pages.Insert(pages.Count - 4, indexPage);
-
-        ChapterUtils.customChapter = chapter;
-        ChapterUtils.LoadChapter();
+        ChapterUtils.InitGame();
     }
 }
+
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
+internal class Storyteller_GoToPage
+{
+    static void Prefix(Storyteller __instance, int pageIndex)
+    {
+        //System.Console.WriteLine(pageIndex);
+        //System.Console.WriteLine(__instance.activePageIndex);
+    }
+}
+
 /*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
