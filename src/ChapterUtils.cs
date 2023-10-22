@@ -8,7 +8,7 @@ internal class ChapterUtils
     static int insertionPoint;
     static Chapter customChapter;
     static int addedPages = 0;
-    static string[] chapterPaths;
+    static string currentChapterPath;
     static readonly LevelID[] allowedIDs = new LevelID[]
     {
         // Unused levels, can be overwritten relatively safely.
@@ -22,6 +22,20 @@ internal class ChapterUtils
         LevelID.DogSandbox
     };
 
+    static string[] GetFolders()
+    {
+        if (!Directory.Exists("./custom_levels"))
+        {
+            Directory.CreateDirectory("./custom_levels");
+            // Obviously there won't be any folders in this case
+            return new string[0];
+        }
+        else
+        {
+            return Directory.GetDirectories("./custom_levels");
+        }
+    }
+
     public static void LoadChapter()
     {
         var pages = Storyteller.game.pages;
@@ -31,25 +45,15 @@ internal class ChapterUtils
         customChapter.levels.Clear();
         LevelUtils.ClearLevelData();
         Campaign.curChapter = customChapter;
-        Campaign.chapterLevelNumber = 1;
 
-        if (!Directory.Exists("./custom_levels"))
-        {
-            Directory.CreateDirectory("./custom_levels");
-            // Obviously there won't be any levels in the directory in this case
-            return;
-        }
-
-        chapterPaths = Directory.GetDirectories("./custom_levels");
         string[] files;
-        if (chapterPaths.Length == 0)
+        if (currentChapterPath == null)
         {
             files = Directory.GetFiles("./custom_levels", "*.txt");
         }
         else
         {
-            Array.Sort(chapterPaths);
-            files = Directory.GetFiles(chapterPaths[0], "*.txt");
+            files = Directory.GetFiles(currentChapterPath, "*.txt");
         }
         Array.Sort(files);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
@@ -72,6 +76,29 @@ internal class ChapterUtils
             LevelUtils.LoadLevel(id);
         }
         Storyteller.game.UpdateSavegameCache();
+    }
+
+    public static void GoToPage(ref int pageIndex)
+    {
+        var game = Storyteller.game;
+        if (game.activePageIndex == insertionPoint)
+        {
+            string[] folders = GetFolders();
+            if (pageIndex == insertionPoint - 1)
+            {
+                currentChapterPath = folders.Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
+                LoadChapter();
+                pageIndex = insertionPoint;
+                game.activePageIndex = insertionPoint + addedPages + 1;
+            }
+            else if (pageIndex == insertionPoint + addedPages + 1)
+            {
+                currentChapterPath = folders.Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
+                LoadChapter();
+                pageIndex = insertionPoint;
+                game.activePageIndex = insertionPoint - 1;
+            }
+        }
     }
 
     public static Chapter CreateChapter(string id, string name)
@@ -105,6 +132,7 @@ internal class ChapterUtils
 
         CreateChapter("custom_levels_helper", "You shouldn't be seeing this,\nplease ignore it");
         customChapter = CreateChapter("custom_levels", "Custom levels");
+        currentChapterPath = GetFolders().Min();
         LoadChapter();
     }
 }

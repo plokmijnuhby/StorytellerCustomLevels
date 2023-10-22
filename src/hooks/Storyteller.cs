@@ -15,8 +15,9 @@ internal class Storyteller_LoadBookPages
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
 internal class Storyteller_GoToPage
 {
-    static void Prefix(Storyteller __instance, int pageIndex)
+    static void Prefix(ref int pageIndex)
     {
+        ChapterUtils.GoToPage(ref pageIndex);
         //System.Console.WriteLine(pageIndex);
         //System.Console.WriteLine(__instance.activePageIndex);
     }
