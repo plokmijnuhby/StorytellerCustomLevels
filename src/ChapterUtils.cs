@@ -87,9 +87,12 @@ internal class ChapterUtils
             if (pageIndex == insertionPoint - 1)
             {
                 currentChapterPath = folders.Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
-                LoadChapter();
-                pageIndex = insertionPoint;
-                game.activePageIndex = insertionPoint + addedPages + 1;
+                if (currentChapterPath != null)
+                {
+                    LoadChapter();
+                    pageIndex = insertionPoint;
+                    game.activePageIndex = insertionPoint + addedPages + 1;
+                }
             }
             else if (pageIndex == insertionPoint + addedPages + 1)
             {
