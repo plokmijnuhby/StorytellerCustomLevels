@@ -45,6 +45,7 @@ internal class ChapterUtils
         customChapter.levels.Clear();
         LevelUtils.ClearLevelData();
         Campaign.curChapter = customChapter;
+        Campaign.chapterLevelNumber = 1;
 
         string[] files;
         if (currentChapterPath == null)
