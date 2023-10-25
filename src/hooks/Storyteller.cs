@@ -18,8 +18,6 @@ internal class Storyteller_GoToPage
     static void Prefix(ref int pageIndex)
     {
         ChapterUtils.GoToPage(ref pageIndex);
-        //System.Console.WriteLine(pageIndex);
-        //System.Console.WriteLine(__instance.activePageIndex);
     }
 }
 

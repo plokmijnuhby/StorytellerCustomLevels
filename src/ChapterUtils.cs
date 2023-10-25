@@ -79,28 +79,35 @@ internal class ChapterUtils
         Storyteller.game.UpdateSavegameCache();
     }
 
+    public static void LoadNextChapter()
+    {
+        currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
+        var game = Storyteller.game;
+        if (currentChapterPath != null)
+        {
+            LoadChapter();
+            game.activePageIndex = insertionPoint;
+        }
+        else
+        {
+            game.GoToPageImmediate(game.activePageIndex + 1, false, true);
+        }
+    }
+
     public static void GoToPage(ref int pageIndex)
     {
         var game = Storyteller.game;
         if (game.activePageIndex == insertionPoint)
         {
-            string[] folders = GetFolders();
             if (pageIndex == insertionPoint - 1)
             {
-                currentChapterPath = folders.Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
+                currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
                 if (currentChapterPath != null)
                 {
                     LoadChapter();
                     pageIndex = insertionPoint;
                     game.activePageIndex = insertionPoint + addedPages + 1;
                 }
-            }
-            else if (pageIndex == insertionPoint + addedPages + 1)
-            {
-                currentChapterPath = folders.Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
-                LoadChapter();
-                pageIndex = insertionPoint;
-                game.activePageIndex = insertionPoint - 1;
             }
         }
     }

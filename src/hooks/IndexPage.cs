@@ -11,5 +11,9 @@ internal class IndexPage_Load
         {
             ChapterUtils.LoadChapter();
         }
+        else if (chapterId == "custom_levels_helper")
+        {
+            ChapterUtils.LoadNextChapter();
+        }
     }
 }
