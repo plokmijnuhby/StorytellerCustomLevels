@@ -111,32 +111,36 @@ internal class ChapterUtils
         if (game.activePageIndex == insertionPoint && pageIndex == insertionPoint - 1)
         {
             currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
-            if (currentChapterPath == null)
+            if (currentChapterPath != null)
             {
-                return;
+                LoadChapter();
+                pageIndex = insertionPoint;
+                game.activePageIndex = insertionPoint + addedPages + 1;
+                chapterAlreadyFixed = true;
             }
         }
         // Second, flipping left from the badges page.
         else if (game.activePageIndex == pageIndex + 1 && pageIndex == insertionPoint + addedPages + 1)
         {
             currentChapterPath = GetFolders().Max();
+            LoadChapter();
+            pageIndex = insertionPoint;
+            game.activePageIndex = insertionPoint + addedPages + 1;
+            chapterAlreadyFixed = true;
         }
         // Third, flipping right from the epilogue page.
+        // We don't set the activePageIndex here, it's already correct.
         else if (game.activePageIndex == insertionPoint - 1 && pageIndex == insertionPoint)
         {
             currentChapterPath = GetFolders().Min();
+            LoadChapter();
+            pageIndex = insertionPoint;
+            chapterAlreadyFixed = true;
         }
-        // Fourth, anything else. Note that flipping right from the index page falls into this category -
+        // Fourth, anything else (do nothing).
+        // Note that flipping right from the index page falls into this category;
         // this can't be dealt with here, because we have to wait until we have flipped past the levels pages
         // before we reload the levels. So this case is mainly handled by LoadIndexPage.
-        else
-        {
-            return;
-        }
-        LoadChapter();
-        pageIndex = insertionPoint;
-        game.activePageIndex = insertionPoint + addedPages + 1;
-        chapterAlreadyFixed = true;
     }
 
     public static void InitGame()
