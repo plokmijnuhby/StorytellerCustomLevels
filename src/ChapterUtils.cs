@@ -146,7 +146,7 @@ internal class ChapterUtils
     public static void InitGame()
     {
         insertionPoint = Storyteller.game.pages.Count - 4;
-        Text.AddText("custom_subchapterTitle", "Custom chapter", Array.Empty<string>());
+        Text.AddText("custom_subchapterTitle", "Custom levels", Array.Empty<string>());
 
         var subchapterTitle = new TextBlock()
         {
