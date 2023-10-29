@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace CustomLevels;
 internal class ChapterUtils
@@ -52,10 +53,14 @@ internal class ChapterUtils
         if (currentChapterPath == null)
         {
             files = Directory.GetFiles("./custom_levels", "*.txt");
+            Text.AddText("chapter_title_custom_levels", "Custom levels", new string[0]);
         }
         else
         {
             files = Directory.GetFiles(currentChapterPath, "*.txt");
+            string chapterName = Path.GetFileName(currentChapterPath)
+                .Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries).Last();
+            Text.AddText("chapter_title_custom_levels", chapterName, new string[0]);
         }
         Array.Sort(files);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
