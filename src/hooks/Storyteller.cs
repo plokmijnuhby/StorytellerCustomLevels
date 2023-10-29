@@ -21,7 +21,6 @@ internal class Storyteller_GoToPage
     }
 }
 
-/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
 {
@@ -32,17 +31,18 @@ internal class Storyteller_ComputeSolvedRatioForSlot
 
     static void Prefix()
     {
-        levels = Utils.customChapter.levels;
-        Utils.customChapter.levels = new();
+        levels = ChapterUtils.customChapter.levels;
+        ChapterUtils.customChapter.levels = new();
     }
 
     static void Finalizer()
     {
-        Utils.customChapter.levels = levels;
+        ChapterUtils.customChapter.levels = levels;
         levels = null;
     }
 }
 
+/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
 {

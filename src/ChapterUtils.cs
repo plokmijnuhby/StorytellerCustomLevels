@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace CustomLevels;
 internal class ChapterUtils
 {
+    public static Chapter customChapter;
     static int insertionPoint;
-    static Chapter customChapter;
     static int addedPages = 0;
     static string currentChapterPath;
     static bool chapterAlreadyFixed = false;
