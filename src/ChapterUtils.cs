@@ -9,6 +9,7 @@ internal class ChapterUtils
     static Chapter customChapter;
     static int addedPages = 0;
     static string currentChapterPath;
+    static bool chapterAlreadyFixed = false;
     static readonly LevelID[] allowedIDs = new LevelID[]
     {
         // Unused levels, can be overwritten relatively safely.
@@ -79,8 +80,16 @@ internal class ChapterUtils
         Storyteller.game.UpdateSavegameCache();
     }
 
-    public static void LoadNextChapter()
+    public static void LoadIndexPage()
     {
+        if (chapterAlreadyFixed)
+        {
+            chapterAlreadyFixed = false;
+            return;
+        }
+        // If we got here, normally that means we flipped right from the index page.
+        // There are some other ways of getting here, but they are rare enough to not bother fixing properly -
+        // switching to the badges page is a good enough response.
         currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
         var game = Storyteller.game;
         if (currentChapterPath != null)
@@ -90,50 +99,44 @@ internal class ChapterUtils
         }
         else
         {
-            game.GoToPageImmediate(game.activePageIndex + 1, false, true);
+            game.GoToPageImmediate(insertionPoint + addedPages + 2, true, true);
         }
     }
 
     public static void GoToPage(ref int pageIndex)
     {
         var game = Storyteller.game;
-        if (game.activePageIndex == insertionPoint)
+        // There are four cases here.
+        // First, flipping left from the index page.
+        if (game.activePageIndex == insertionPoint && pageIndex == insertionPoint - 1)
         {
-            if (pageIndex == insertionPoint - 1)
+            currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
+            if (currentChapterPath == null)
             {
-                currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
-                if (currentChapterPath != null)
-                {
-                    LoadChapter();
-                    pageIndex = insertionPoint;
-                    game.activePageIndex = insertionPoint + addedPages + 1;
-                }
+                return;
             }
         }
-    }
-
-    public static Chapter CreateChapter(string id, string name)
-    {
-        var subchapterTitle = new TextBlock()
+        // Second, flipping left from the badges page.
+        else if (game.activePageIndex == pageIndex + 1 && pageIndex == insertionPoint + addedPages + 1)
         {
-            key = "custom_subchapterTitle",
-            values = Array.Empty<Il2CppSystem.Object>()
-        };
-
-        // illustration_marco is a blank illustration, seen on the left of the list of levels.
-        Campaign.BeginChapter(id, name, "illustration_marco");
-        var chapter = Campaign.curChapter;
-        chapter.subchapterTitle = subchapterTitle;
-        Campaign.EndChapter();
-
-        var indexPage = new PageSpec()
+            currentChapterPath = GetFolders().Max();
+        }
+        // Third, flipping right from the epilogue page.
+        else if (game.activePageIndex == insertionPoint - 1 && pageIndex == insertionPoint)
         {
-            id = "chapter_" + id,
-            type = PageType.Index,
-            chapterId = id
-        };
-        Storyteller.game.pages.Insert(insertionPoint, indexPage);
-        return chapter;
+            currentChapterPath = GetFolders().Min();
+        }
+        // Fourth, anything else. Note that flipping right from the index page falls into this category -
+        // this can't be dealt with here, because we have to wait until we have flipped past the levels pages
+        // before we reload the levels. So this case is mainly handled by LoadIndexPage.
+        else
+        {
+            return;
+        }
+        LoadChapter();
+        pageIndex = insertionPoint;
+        game.activePageIndex = insertionPoint + addedPages + 1;
+        chapterAlreadyFixed = true;
     }
 
     public static void InitGame()
@@ -141,8 +144,26 @@ internal class ChapterUtils
         insertionPoint = Storyteller.game.pages.Count - 4;
         Text.AddText("custom_subchapterTitle", "Custom chapter", Array.Empty<string>());
 
-        CreateChapter("custom_levels_helper", "You shouldn't be seeing this,\nplease ignore it");
-        customChapter = CreateChapter("custom_levels", "Custom levels");
+        var subchapterTitle = new TextBlock()
+        {
+            key = "custom_subchapterTitle",
+            values = Array.Empty<Il2CppSystem.Object>()
+        };
+
+        // illustration_marco is a blank illustration, seen on the left of the list of levels.
+        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_marco");
+        customChapter = Campaign.curChapter;
+        customChapter.subchapterTitle = subchapterTitle;
+        Campaign.EndChapter();
+
+        var indexPage = new PageSpec()
+        {
+            id = "chapter_custom_levels",
+            type = PageType.Index,
+            chapterId = "custom_levels"
+        };
+        Storyteller.game.pages.Insert(insertionPoint, indexPage);
+        Storyteller.game.pages.Insert(insertionPoint, indexPage);
         currentChapterPath = GetFolders().Min();
         LoadChapter();
     }

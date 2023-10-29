@@ -9,11 +9,7 @@ internal class IndexPage_Load
     {
         if (chapterId == "custom_levels")
         {
-            ChapterUtils.LoadChapter();
-        }
-        else if (chapterId == "custom_levels_helper")
-        {
-            ChapterUtils.LoadNextChapter();
+            ChapterUtils.LoadIndexPage();
         }
     }
 }
