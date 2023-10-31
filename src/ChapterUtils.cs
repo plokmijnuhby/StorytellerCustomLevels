@@ -6,7 +6,7 @@ namespace CustomLevels;
 internal class ChapterUtils
 {
     public static Chapter customChapter;
-    static int insertionPoint;
+    public static int insertionPoint;
     static int addedPages = 0;
     static string currentChapterPath;
     static bool chapterAlreadyFixed = false;

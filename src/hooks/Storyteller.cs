@@ -42,7 +42,7 @@ internal class Storyteller_ComputeSolvedRatioForSlot
     }
 }
 
-/*
+
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
 {
@@ -52,11 +52,11 @@ internal class Storyteller_UpdateSavegameCache
         // We want our levels to be ignored when checking this,
         // so we undo the effect they had on the basegame levels.
         var savegameCache = __instance.savegameCache;
-        if (savegameCache.firstIndexPageWithUnsolvedLevels == Utils.normalPages - 5)
+        if (savegameCache.firstIndexPageWithUnsolvedLevels == ChapterUtils.insertionPoint)
         {
             savegameCache.firstIndexPageWithUnsolvedLevels = -1;
         }
-        foreach (var levelEntry in Utils.customChapter.levels)
+        foreach (var levelEntry in ChapterUtils.customChapter.levels)
         {
             savegameCache.totalCrownLevels -= 1;
 
@@ -73,4 +73,3 @@ internal class Storyteller_UpdateSavegameCache
         }
     }
 }
-*/
