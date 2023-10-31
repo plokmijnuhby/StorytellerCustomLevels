@@ -141,7 +141,13 @@ internal class ChapterUtils
             pageIndex = insertionPoint;
             chapterAlreadyFixed = true;
         }
-        // Fourth, anything else (do nothing).
+        // Fourth, flipping from a level to the index.
+        else if (insertionPoint < game.activePageIndex && game.activePageIndex <= insertionPoint + addedPages
+            && pageIndex == insertionPoint)
+        {
+            chapterAlreadyFixed = true;
+        }
+        // Fifth, anything else (do nothing).
         // Note that flipping right from the index page falls into this category;
         // this can't be dealt with here, because we have to wait until we have flipped past the levels pages
         // before we reload the levels. So this case is mainly handled by LoadIndexPage.
