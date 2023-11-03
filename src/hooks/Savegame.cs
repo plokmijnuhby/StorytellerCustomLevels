@@ -14,7 +14,9 @@ internal class Savegame_SetSolution
         {
             return true;
         }
-        LevelUtils.solutions[(LevelUtils.filePaths[levelID], goalid)] = config;
+        StoryConfig newConfig = new();
+        newConfig.CopyFrom(config);
+        LevelUtils.solutions[(LevelUtils.filePaths[levelID], goalid)] = newConfig;
         return false;
     }
 }
