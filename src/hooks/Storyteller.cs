@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Linq;
 
 namespace CustomLevels.hooks;
 
@@ -71,5 +72,15 @@ internal class Storyteller_UpdateSavegameCache
                 savegameCache.solvedCrownLevels -= 1;
             }
         }
+    }
+}
+
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GrantStamp))]
+internal class Storyteller_GrantStamp
+{
+    // It should not be possible to obtain stamps in a custom level.
+    static bool Prefix(LevelID levelId)
+    {
+        return !ChapterUtils.allowedIDs.Contains(levelId);
     }
 }

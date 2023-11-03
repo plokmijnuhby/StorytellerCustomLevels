@@ -10,7 +10,7 @@ internal class ChapterUtils
     static int addedPages = 0;
     static string currentChapterPath;
     static bool chapterAlreadyFixed = false;
-    static readonly LevelID[] allowedIDs = new LevelID[]
+    public static readonly LevelID[] allowedIDs = new LevelID[]
     {
         // Unused levels, can be overwritten relatively safely.
         // We can only have 7 or we'll run out of space to display them.

@@ -27,6 +27,7 @@ internal class LevelUtils
 
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static readonly Dictionary<LevelID, string> filePaths = new();
+    public static readonly Dictionary<(string, string), StoryConfig> solutions = new();
 
     static T GetEnum<T>(string name) where T : struct
     {
