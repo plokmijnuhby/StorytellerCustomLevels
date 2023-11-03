@@ -29,12 +29,11 @@ internal class Storyteller_ComputeSolvedRatioForSlot
         ChapterUtils.customChapter.levels = new();
     }
 
-    static void Finalizer()
+    static void Finalizer(Storyteller __instance)
     {
         ChapterUtils.customChapter.levels = levels;
         levels = null;
-        Storyteller game = Storyteller.game;
-        game.LoadSlot(game.settings.currentSaveSlot, game.savegame);
+        __instance.LoadSlot(__instance.settings.currentSaveSlot, __instance.savegame);
     }
 }
 
