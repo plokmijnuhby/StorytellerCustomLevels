@@ -18,6 +18,8 @@ internal class Storyteller_ComputeSolvedRatioForSlot
 {
     // This method is used to determine completion percentage. 
     // We delete the levels while the method is running, and immediately add them back afterwards.
+    // We also need to reload the current save slot when we're done,
+    // since this fixes certain issues with the way saving works.
 
     static Il2CppSystem.Collections.Generic.List<ChapterLevelEntry> levels;
 
@@ -31,6 +33,8 @@ internal class Storyteller_ComputeSolvedRatioForSlot
     {
         ChapterUtils.customChapter.levels = levels;
         levels = null;
+        Storyteller game = Storyteller.game;
+        game.LoadSlot(game.settings.currentSaveSlot, game.savegame);
     }
 }
 
