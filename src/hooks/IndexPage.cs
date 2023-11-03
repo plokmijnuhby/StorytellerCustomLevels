@@ -11,9 +11,5 @@ internal class IndexPage_Load
         {
             ChapterUtils.LoadIndexPage();
         }
-        else
-        {
-            ChapterUtils.chapterAlreadyFixed = false;
-        }
     }
 }

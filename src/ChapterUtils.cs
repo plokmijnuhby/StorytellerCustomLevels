@@ -9,7 +9,6 @@ internal class ChapterUtils
     public static int insertionPoint;
     static int addedPages = 0;
     static string currentChapterPath;
-    public static bool chapterAlreadyFixed = true;
     public static readonly LevelID[] allowedIDs = new LevelID[]
     {
         // Unused levels, can be overwritten relatively safely.
@@ -86,16 +85,15 @@ internal class ChapterUtils
 
     public static void LoadIndexPage()
     {
-        if (chapterAlreadyFixed)
+        var game = Storyteller.game;
+        if (game.activePageIndex == insertionPoint)
         {
-            chapterAlreadyFixed = false;
             return;
         }
         // If we got here, normally that means we flipped right from the index page.
         // There are some other ways of getting here, but they are rare enough to not bother fixing properly -
         // switching to the badges page is a good enough response.
         currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
-        var game = Storyteller.game;
         if (currentChapterPath != null)
         {
             LoadChapter();
@@ -120,7 +118,6 @@ internal class ChapterUtils
                 LoadChapter();
                 pageIndex = insertionPoint;
                 game.activePageIndex = insertionPoint + addedPages + 1;
-                chapterAlreadyFixed = true;
             }
         }
         // Second, flipping left from the badges page.
@@ -130,7 +127,6 @@ internal class ChapterUtils
             LoadChapter();
             pageIndex = insertionPoint;
             game.activePageIndex = insertionPoint + addedPages + 1;
-            chapterAlreadyFixed = true;
         }
         // Third, flipping right from the epilogue page.
         // We don't set the activePageIndex here, it's already correct.
@@ -139,15 +135,8 @@ internal class ChapterUtils
             currentChapterPath = GetFolders().Min();
             LoadChapter();
             pageIndex = insertionPoint;
-            chapterAlreadyFixed = true;
         }
-        // Fourth, flipping from a level to the index.
-        else if (insertionPoint < game.activePageIndex && game.activePageIndex <= insertionPoint + addedPages
-            && pageIndex == insertionPoint)
-        {
-            chapterAlreadyFixed = true;
-        }
-        // Fifth, anything else (do nothing).
+        // Fourth, anything else (do nothing).
         // Note that flipping right from the index page falls into this category;
         // this can't be dealt with here, because we have to wait until we have flipped past the levels pages
         // before we reload the levels. So this case is mainly handled by LoadIndexPage.

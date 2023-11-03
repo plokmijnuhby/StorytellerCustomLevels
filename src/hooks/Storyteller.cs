@@ -13,15 +13,6 @@ internal class Storyteller_LoadBookPages
     }
 }
 
-[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
-internal class Storyteller_GoToPage
-{
-    static void Prefix(ref int pageIndex)
-    {
-        ChapterUtils.GoToPage(ref pageIndex);
-    }
-}
-
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
 {
