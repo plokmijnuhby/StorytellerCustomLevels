@@ -98,6 +98,7 @@ internal class ChapterUtils
         {
             LoadChapter();
             game.activePageIndex = insertionPoint;
+            game.book.pageManager.currentPageTargetIndex = -1;
         }
         else
         {
