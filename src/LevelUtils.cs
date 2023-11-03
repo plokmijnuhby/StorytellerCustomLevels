@@ -45,9 +45,13 @@ internal class LevelUtils
         if (id.StartsWith("music_"))
         {
             bool isLevel = Enum.TryParse(id["music_".Length..], true, out LevelID levelID);
-            if (isLevel && musicSources.TryGetValue(levelID, out LevelID newLevelID))
+            if (isLevel)
             {
-                return "music_" + newLevelID.ToString().ToLowerInvariant();
+                LoadLevel(levelID);
+                if (musicSources.TryGetValue(levelID, out LevelID newLevelID))
+                {
+                    return "music_" + newLevelID.ToString().ToLowerInvariant();
+                }
             }
         }
         return id;
