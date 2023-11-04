@@ -45,6 +45,14 @@ internal class ChapterUtils
 
     static int Compare(string x, string y)
     {
+        if (x == null)
+        {
+            return y == null ? 0 : -1;
+        }
+        else if (y == null)
+        {
+            return 1;
+        }
         string xPrefix = SplitWhitespace(x)[0];
         string yPrefix = SplitWhitespace(y)[0];
 
