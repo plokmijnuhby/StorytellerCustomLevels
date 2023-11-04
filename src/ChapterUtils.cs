@@ -38,9 +38,18 @@ internal class ChapterUtils
         }
     }
 
-    static string[] SplitWhitespace(string x)
+    static string[] SplitWhitespace(string x, bool extension = false)
     {
-        return Path.GetFileName(x).Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries);
+        string name;
+        if (extension)
+        {
+            name = Path.GetFileNameWithoutExtension(x);
+        }
+        else
+        {
+            name = Path.GetFileName(x);
+        }
+        return name.Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries);
     }
 
     static int Compare(string x, string y)
@@ -99,7 +108,7 @@ internal class ChapterUtils
         Array.Sort(files, Compare);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
         {
-            string name = SplitWhitespace(file).Last();
+            string name = SplitWhitespace(file, true).Last();
             Campaign.AddLevel(name.Replace('_', ' '), id);
             addedPages++;
 
