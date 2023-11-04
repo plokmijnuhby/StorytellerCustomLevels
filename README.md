@@ -45,3 +45,5 @@ There are four commands that can affect the way goals are checked - `SEQUENCE`, 
 To see possible values for the arguments, you will probably need to consult [the enums directory](./enums). This gives possible values for actor, event, level, and setting names. Some of these names are quite different to the name the game actually displays.
 
 It should be noted that some of the actors are not supposed to be placable, and are related to a specific setting. Also, some of the actors, settings and levels do not appear in the main game, and thus may have missing assets. Even if you avoid these, some sets of interactions (eg pushing Lenora off a cliff) may not work quite correctly. You might choose to avoid these... or not, if you know what you're doing.
+
+Each subfolder in the `custom_levels` folder will be turned into a chapter. If there are no subfolders, then the `custom_levels` folder itself will become a chapter, and levels can be placed in the chapter directly.
