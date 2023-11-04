@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Globalization;
+using System.Collections.Generic;
 
 namespace CustomLevels;
 internal class ChapterUtils
@@ -36,6 +38,33 @@ internal class ChapterUtils
         }
     }
 
+    static string[] SplitWhitespace(string x)
+    {
+        return Path.GetFileName(x).Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    static int Compare(string x, string y)
+    {
+        string xPrefix = SplitWhitespace(x)[0];
+        string yPrefix = SplitWhitespace(y)[0];
+
+        // "C10" > "C2"
+        int res = xPrefix.Length.CompareTo(yPrefix.Length);
+        if (res == 0)
+        {
+            // "C2" > "C1"
+            res = string.Compare(xPrefix, yPrefix, false, CultureInfo.InvariantCulture);
+            if (res == 0)
+            {
+                // "C 2" > "C 1" 
+                res = string.Compare(x, y, false, CultureInfo.InvariantCulture);
+            }
+        }
+        return res;
+    }
+
+    static Comparer<string> comparer = Comparer<string>.Create(Compare);
+
     public static void LoadChapter()
     {
         var pages = Storyteller.game.pages;
@@ -56,15 +85,13 @@ internal class ChapterUtils
         else
         {
             files = Directory.GetFiles(currentChapterPath, "*.txt");
-            string chapterName = Path.GetFileName(currentChapterPath)
-                .Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries).Last();
+            string chapterName = SplitWhitespace(currentChapterPath).Last();
             Text.AddText("chapter_title_custom_levels", chapterName, new string[0]);
         }
-        Array.Sort(files);
+        Array.Sort(files, Compare);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
         {
-            string name = Path.GetFileNameWithoutExtension(file);
-            name = name.Split((char[])null, 2, StringSplitOptions.RemoveEmptyEntries).Last();
+            string name = SplitWhitespace(file).Last();
             Campaign.AddLevel(name.Replace('_', ' '), id);
             addedPages++;
 
@@ -90,10 +117,10 @@ internal class ChapterUtils
         {
             return;
         }
-        // If we got here, normally that means we flipped right from the index page.
-        // There are some other ways of getting here, but they are rare enough to not bother fixing properly -
-        // switching to the badges page is a good enough response.
-        currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) > 0).Min();
+        // If we got here, normally that means we flipped right from the index page,
+        // although there are some other ways of getting here too.
+        currentChapterPath = GetFolders().Where(folder => Compare(folder, currentChapterPath) > 0)
+            .Min(comparer);
         if (currentChapterPath != null)
         {
             LoadChapter();
@@ -113,7 +140,8 @@ internal class ChapterUtils
         // First, flipping left from the index page.
         if (game.activePageIndex == insertionPoint && pageIndex == insertionPoint - 1)
         {
-            currentChapterPath = GetFolders().Where(folder => string.Compare(folder, currentChapterPath) < 0).Max();
+            currentChapterPath = GetFolders().Where(folder => Compare(folder, currentChapterPath) < 0)
+                .Max(comparer);
             if (currentChapterPath != null)
             {
                 LoadChapter();
@@ -124,7 +152,7 @@ internal class ChapterUtils
         // Second, flipping left from the badges page.
         else if (game.activePageIndex == pageIndex + 1 && pageIndex == insertionPoint + addedPages + 1)
         {
-            currentChapterPath = GetFolders().Max();
+            currentChapterPath = GetFolders().Max(comparer);
             LoadChapter();
             pageIndex = insertionPoint;
             game.activePageIndex = insertionPoint + addedPages + 1;
@@ -133,7 +161,7 @@ internal class ChapterUtils
         // We don't set the activePageIndex here, it's already correct.
         else if (game.activePageIndex == insertionPoint - 1 && pageIndex == insertionPoint)
         {
-            currentChapterPath = GetFolders().Min();
+            currentChapterPath = GetFolders().Min(comparer);
             LoadChapter();
             pageIndex = insertionPoint;
         }
@@ -168,7 +196,7 @@ internal class ChapterUtils
         };
         Storyteller.game.pages.Insert(insertionPoint, indexPage);
         Storyteller.game.pages.Insert(insertionPoint, indexPage);
-        currentChapterPath = GetFolders().Min();
+        currentChapterPath = GetFolders().Min(comparer);
         LoadChapter();
     }
 }
