@@ -74,7 +74,7 @@ internal class Savegame_SaveToData
 [HarmonyPatch(typeof(Savegame), nameof(Savegame.LoadFromLines))]
 internal class Savegame_LoadFromLines
 {
-    static void Postfix(Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStringArray lines)
+    static void Postfix(string[] lines)
     {
         foreach(var line in lines.Reverse())
         {
