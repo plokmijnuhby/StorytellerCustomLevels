@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 namespace CustomLevels;
 internal class ChapterUtils
@@ -199,8 +200,7 @@ internal class ChapterUtils
             values = Array.Empty<Il2CppSystem.Object>()
         };
 
-        // illustration_marco is a blank illustration, seen on the left of the list of levels.
-        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_marco");
+        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_custom");
         customChapter = Campaign.curChapter;
         customChapter.subchapterTitle = subchapterTitle;
         Campaign.EndChapter();
