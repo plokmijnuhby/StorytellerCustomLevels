@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using System;
 using System.IO;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace CustomLevels.hooks;
 
@@ -13,10 +15,21 @@ internal class ResourceLoader_GetSprite
         {
             return true;
         }
-        byte[] data = File.ReadAllBytes("custom_levels/illustration.png");
+
+        byte[] data;
+        try
+        {
+            data = File.ReadAllBytes("custom_levels/illustration.png");
+        }
+        // If there is no illustration, load the blank illustration "illustration_marco" instead.
+        catch (IOException)
+        {
+            id = "illustration_marco";
+            return true;
+        }
         Texture2D tex = new(818, 1228);
         tex.LoadImage(data, true);
-        __result = Sprite.Create(tex, new Rect(0, 0, 818, 1228), new Vector2(0.5f, 0.5f), 614);
+        __result = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 614);
         return false;
     }
 }
