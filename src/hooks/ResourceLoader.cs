@@ -27,7 +27,8 @@ internal class ResourceLoader_GetSprite
             id = "illustration_marco";
             return true;
         }
-        Texture2D tex = new(818, 1228);
+        // Exact dimensions should be 818x1228, but these will be overwritten.
+        Texture2D tex = new(0, 0);
         tex.LoadImage(data, true);
         __result = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 614);
         return false;
