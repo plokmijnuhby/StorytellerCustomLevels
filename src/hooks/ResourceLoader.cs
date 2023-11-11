@@ -15,9 +15,10 @@ internal class ResourceLoader_GetSprite
         }
 
         byte[] data;
+        string folder = ChapterUtils.currentChapterPath ?? "./custom_levels";
         try
         {
-            data = File.ReadAllBytes("custom_levels/illustration.png");
+            data = File.ReadAllBytes(folder + "/illustration.png");
         }
         // If there is no illustration, load the blank illustration "illustration_marco" instead.
         catch (IOException)

@@ -11,7 +11,7 @@ internal class ChapterUtils
     public static Chapter customChapter;
     public static int insertionPoint;
     static int addedPages = 0;
-    static string currentChapterPath;
+    public static string currentChapterPath;
     public static readonly LevelID[] allowedIDs = new LevelID[]
     {
         // Unused levels, can be overwritten relatively safely.
