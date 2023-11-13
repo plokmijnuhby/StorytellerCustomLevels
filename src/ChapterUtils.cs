@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
-using UnityEngine.Assertions;
 
 namespace CustomLevels;
 internal class ChapterUtils
