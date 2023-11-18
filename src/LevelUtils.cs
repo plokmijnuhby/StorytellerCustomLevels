@@ -23,7 +23,7 @@ internal class LevelUtils
     static int currentSubgoals = 0;
     static LevelSpec curlevel;
     static readonly Dictionary<LevelID, bool> verbose = new();
-    static readonly Dictionary<LevelID, LevelID> musicSources = new();
+    static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = new();
 
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static readonly Dictionary<LevelID, string> filePaths = new();
@@ -48,9 +48,15 @@ internal class LevelUtils
             if (isLevel)
             {
                 LoadLevel(levelID);
-                if (musicSources.TryGetValue(levelID, out LevelID newLevelID))
+                if (musicSources.TryGetValue(levelID, out (LevelID, bool) value))
                 {
-                    return "music_" + newLevelID.ToString().ToLowerInvariant();
+                    var (newLevelID, isDevil) = value;
+                    string result = "music_" + newLevelID.ToString().ToLowerInvariant();
+                    if (isDevil)
+                    {
+                        result += "_devil";
+                    }
+                    return result;
                 }
             }
         }
@@ -207,7 +213,7 @@ internal class LevelUtils
                 SetWitchStartsHot();
                 return start;
             case "Music":
-                musicSources[curlevel.id] = GetEnum<LevelID>(line[1]);
+                musicSources[curlevel.id] = (GetEnum<LevelID>(line[1]), line.Length > 2 && line[2] == "Devil");
                 return start;
             case "Verbose":
                 verbose[curlevel.id] = true;
@@ -258,7 +264,7 @@ internal class LevelUtils
         currentSubgoals = 0;
         goalInfos[id] = new();
         verbose[id] = false;
-        musicSources[id] = LevelID.Invalid;
+        musicSources[id] = default;
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
