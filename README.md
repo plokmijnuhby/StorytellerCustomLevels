@@ -27,7 +27,7 @@ Actor Ligeia
 ```
 The level consists of a series of commands in order. I will run through the possible commands here.
 
-* `Music <level>` specifies that the music from the given level should be used.
+* `Music <level>` specifies that the music from the given level should be used. `Music <level> Devil` specifies that music from the devil variant of the level should be used.
 * `Frames <n>` specifies that `n` frames should be used.
 * `Actor <actor>` specifies a specific actor that can be placed.
 * `Setting <setting>` specifies a setting that can be placed in a frame.
