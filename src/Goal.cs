@@ -8,7 +8,6 @@ internal enum CustomGoalType
     Invalid,
     Event,
     Without,
-    Solver,
     All,
     Any,
     Sequence
