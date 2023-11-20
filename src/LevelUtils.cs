@@ -170,13 +170,14 @@ internal class LevelUtils
     }
     static void SetFrames(string frameString)
     {
-        var valid = new string[] { "3", "4", "6", "8" };
-        if (!valid.Contains(frameString))
+        if (!int.TryParse(frameString, out int frames))
         {
-            throw new InvalidOperationException("Frames must be 3, 4, 6, or 8, not " + frameString);
+            throw new InvalidOperationException("Frames must be an integer");
         }
-
-        int frames = int.Parse(frameString);
+        else if (frames < 0)
+        {
+            throw new InvalidOperationException("Frames cannot be negative");
+        }
         curlevel.frames = frames;
 
         // The settings that are in place at the start of the level.
@@ -292,10 +293,6 @@ internal class LevelUtils
         catch (IndexOutOfRangeException)
         {
             ReportError("Could not parse level file");
-        }
-        if (currentSubgoals != 0 && curlevel.frames == 8)
-        {
-            ReportError("Due to display bug, can't have subgoals when 8 frames are used");
         }
 
         Campaign.SetEval(DelegateSupport.ConvertDelegate<GoalsEvaluator>(EvalGoal));
