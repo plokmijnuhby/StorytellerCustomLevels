@@ -20,72 +20,67 @@ internal class LevelPage_ComputeLayout
         __result = new LevelLayout();
         int frames = spec.frames;
         string settingIdSuffix;
-        int cols;
         int rows;
         switch (frames)
         {
-            case 2:
-                settingIdSuffix = "wide3";
-                __result.backgroundId = "background_ingame_wide2";
-                cols = 2;
-                rows = 1;
-                break;
-            case 3:
+            case < 4:
                 settingIdSuffix = "wide3";
                 __result.backgroundId = "background_ingame_wide3";
-                cols = 3;
                 rows = 1;
                 break;
             case 4:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide4";
-                cols = 2;
                 rows = 2;
                 break;
+            case 5:
             case 6:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide6";
-                cols = 3;
                 rows = 2;
                 break;
+            case 7:
             case 8:
                 settingIdSuffix = "wide3";
                 __result.backgroundId = "background_ingame_wide8";
-                cols = 4;
                 rows = 2;
                 break;
             default:
                 settingIdSuffix = "wide6";
-                __result.backgroundId = "background_ingame_wide6";
-                cols = frames;
-                rows = 1;
+                __result.backgroundId = "background_ingame_wide8";
+                rows = 3;
                 break;
         }
+        int cols = (frames - 1) / rows + 1;
+
         __result.framesToolboxSeparatorY = frames < 4 ? -0.32f : -0.55f;
         __result.actorsScale = frames < 4 ? 1.1f : 1.06f;
         __result.framesContainerScale = frames < 7 ? 1.0f : 0.78f;
         __result.usesCompactFrames = frames < 7;
-        
-        if (frames == 8)
+
+        __result.borderSprites = new string[frames];
+        int currentFrame = 0;
+        for (int row = 0; row < rows; row++)
         {
-            __result.borderSprites = new string[]
+            int colsThisRow = cols;
+            if (row != 0 && frames % rows >= row)
             {
-                "set_frame_1_wide3",
-                "set_frame_2_wide3",
-                "set_frame_2_wide3",
-                "set_frame_3_wide3",
-                "set_frame_1_wide3",
-                "set_frame_2_wide3",
-                "set_frame_2_wide3",
-                "set_frame_3_wide3"
-            };
-        }
-        else
-        {
-            __result.borderSprites = new string[frames];
-            for (int frame = 0; frame < frames; frame++)
+                colsThisRow--;
+            }
+            for (int col = 0; col < colsThisRow; col++)
             {
-                __result.borderSprites[frame] = $"set_frame_{frame + 1}_{settingIdSuffix}";
+                int spriteNumber;
+                if (frames < 7)
+                {
+                    spriteNumber = currentFrame + 1;
+                }
+                else
+                {
+                    // Just trust me
+                    int availableBorders = settingIdSuffix == "wide3" ? 3 : 6;
+                    spriteNumber = availableBorders * (col + 1) / (colsThisRow + 1) + 1;
+                }
+                __result.borderSprites[currentFrame++] = $"set_frame_{spriteNumber}_{settingIdSuffix}";
             }
         }
         
