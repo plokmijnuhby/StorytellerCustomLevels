@@ -20,7 +20,6 @@ internal class LevelPage_ComputeLayout
         __result = new LevelLayout();
         int frames = spec.frames;
         string settingIdSuffix;
-        int rows;
         Transform mainAnchorSubgoals;
         Transform subgoalAnchor;
         switch (frames)
@@ -28,7 +27,6 @@ internal class LevelPage_ComputeLayout
             case < 4:
                 settingIdSuffix = "wide3";
                 __result.backgroundId = "background_ingame_wide3";
-                rows = 1;
                 __result.mainGoalAnchor = __instance.goalsAnchor3NoSubgoals;
                 mainAnchorSubgoals = __instance.goalsAnchor3;
                 subgoalAnchor = __instance.subgoalsAnchor3;
@@ -36,9 +34,9 @@ internal class LevelPage_ComputeLayout
                 __result.toolboxAnchor = __instance.toolsAnchor3;
                 break;
             case 4:
+            case 9:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide4";
-                rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor4NoSubgoals;
                 mainAnchorSubgoals = __instance.goalsAnchor4;
                 subgoalAnchor = __instance.subgoalsAnchor4;
@@ -47,9 +45,9 @@ internal class LevelPage_ComputeLayout
                 break;
             case 5:
             case 6:
+            case > 9:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide6";
-                rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor6NoSubgoals;
                 mainAnchorSubgoals = __instance.goalsAnchor6;
                 subgoalAnchor = __instance.subgoalsAnchor6;
@@ -60,22 +58,11 @@ internal class LevelPage_ComputeLayout
             case 8:
                 settingIdSuffix = "wide3";
                 __result.backgroundId = "background_ingame_wide8";
-                rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor8;
                 mainAnchorSubgoals = __instance.goalsAnchor6;
                 subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor8;
                 __result.toolboxAnchor = __instance.toolsAnchor8;
-                break;
-            default:
-                settingIdSuffix = "wide6";
-                __result.backgroundId = "background_ingame_wide4";
-                rows = 3;
-                __result.mainGoalAnchor = __instance.goalsAnchor4NoSubgoals;
-                mainAnchorSubgoals = __instance.goalsAnchor4;
-                subgoalAnchor = __instance.subgoalsAnchor4;
-                __result.framesAnchor = __instance.framesAnchor4;
-                __result.toolboxAnchor = __instance.toolsAnchor4;
                 break;
         }
         if (spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked()))
@@ -87,24 +74,34 @@ internal class LevelPage_ComputeLayout
         {
             __result.mainGoalAnchorPostSubgoalReveal = __result.mainGoalAnchor;
         }
+
+        int rows;
+        switch (frames)
+        {
+            case < 4: rows = 1; break;
+            case < 9: rows = 2; break;
+            default: rows = 3; break;
+        }
         int cols = (frames - 1) / rows + 1;
 
         __result.framesToolboxSeparatorY = frames < 4 ? -0.32f : -0.55f;
         __result.actorsScale = frames < 4 ? 1.1f : 1.06f;
-        if (frames < 7)
+
+        switch (frames)
         {
-            __result.framesContainerScale = 1.0f;
-            __result.usesCompactFrames = false;
-        }
-        else if (frames < 9)
-        {
-            __result.framesContainerScale = 0.78f;
-            __result.usesCompactFrames = true;
-        }
-        else
-        {
-            __result.framesContainerScale = 2/3;
-            __result.usesCompactFrames = true;
+            case < 7:
+                __result.framesContainerScale = 1.0f;
+                __result.usesCompactFrames = false;
+                break;
+            case 7:
+            case 8:
+                __result.framesContainerScale = 0.78f;
+                __result.usesCompactFrames = true;
+                break;
+            default:
+                __result.framesContainerScale = 0.66f;
+                __result.usesCompactFrames = true;
+                break;
         }
 
         __result.settingIdSuffix = settingIdSuffix;
