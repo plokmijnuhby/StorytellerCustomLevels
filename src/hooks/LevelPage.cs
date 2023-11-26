@@ -58,32 +58,6 @@ internal class LevelPage_ComputeLayout
         __result.framesContainerScale = frames < 7 ? 1.0f : 0.78f;
         __result.usesCompactFrames = frames < 7;
 
-        __result.borderSprites = new string[frames];
-        int currentFrame = 0;
-        for (int row = 0; row < rows; row++)
-        {
-            int colsThisRow = cols;
-            if (row != 0 && frames % rows >= row)
-            {
-                colsThisRow--;
-            }
-            for (int col = 0; col < colsThisRow; col++)
-            {
-                int spriteNumber;
-                if (frames < 7)
-                {
-                    spriteNumber = currentFrame + 1;
-                }
-                else
-                {
-                    // Just trust me
-                    int availableBorders = settingIdSuffix == "wide3" ? 3 : 6;
-                    spriteNumber = availableBorders * (col + 1) / (colsThisRow + 1) + 1;
-                }
-                __result.borderSprites[currentFrame++] = $"set_frame_{spriteNumber}_{settingIdSuffix}";
-            }
-        }
-        
         bool hasSubgoals = spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked());
         switch (frames)
         {
@@ -149,16 +123,36 @@ internal class LevelPage_ComputeLayout
         __result.gutterW = 0.02f;
         __result.frameSelectorSprite = "ui_frame_selector_" + settingIdSuffix;
 
+        __result.borderSprites = new string[frames];
         var bounds = __result.settingPlaceholder.bounds;
         Vector3 extents = bounds.extents * __result.framesContainerScale;
         bounds.extents = extents;
         Vector3 framesAnchorPos = __result.framesAnchor.position;
         float yOffset = rows * (extents.y + 0.01f) - 0.01f + framesAnchorPos.y;
+        int currentFrame = 0;
         for (int row = 0; row < rows; row++)
         {
-            float xOffset = 0.01f - cols * (extents.x + 0.01f);
-            for (int col = 0; col < cols; col++)
+            int colsThisRow = cols;
+            if (row != 0 && frames % rows >= row)
             {
+                colsThisRow--;
+            }
+            float xOffset = 0.01f - colsThisRow * (extents.x + 0.01f);
+            for (int col = 0; col < colsThisRow; col++)
+            {
+                int spriteNumber;
+                if (frames < 7)
+                {
+                    spriteNumber = currentFrame + 1;
+                }
+                else
+                {
+                    // Just trust me
+                    int availableBorders = settingIdSuffix == "wide3" ? 3 : 6;
+                    spriteNumber = availableBorders * (col + 1) / (colsThisRow + 1) + 1;
+                }
+                __result.borderSprites[currentFrame++] = $"set_frame_{spriteNumber}_{settingIdSuffix}";
+
                 bounds.center = new Vector3(extents.x + xOffset, yOffset - extents.y);
                 __result.frames.Add(bounds);
                 xOffset += extents.x * 2 + 0.02f;
