@@ -126,7 +126,7 @@ internal class LevelPage_ComputeLayout
         for (int row = 0; row < rows; row++)
         {
             int colsThisRow = cols;
-            if (row != 0 && frames % rows >= row)
+            if (frames % rows != 0 && frames % rows <= row)
             {
                 colsThisRow--;
             }
