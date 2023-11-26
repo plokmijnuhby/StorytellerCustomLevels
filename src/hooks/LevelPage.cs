@@ -103,7 +103,7 @@ internal class LevelPage_ComputeLayout
         }
         else
         {
-            __result.framesContainerScale = 0.66f;
+            __result.framesContainerScale = 2/3;
             __result.usesCompactFrames = true;
         }
 
