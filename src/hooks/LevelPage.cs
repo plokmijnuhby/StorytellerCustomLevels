@@ -21,7 +21,8 @@ internal class LevelPage_ComputeLayout
         int frames = spec.frames;
         string settingIdSuffix;
         int rows;
-        bool hasSubgoals = spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked());
+        Transform mainAnchorSubgoals;
+        Transform subgoalAnchor;
         switch (frames)
         {
             case < 4:
@@ -29,15 +30,8 @@ internal class LevelPage_ComputeLayout
                 __result.backgroundId = "background_ingame_wide3";
                 rows = 1;
                 __result.mainGoalAnchor = __instance.goalsAnchor3NoSubgoals;
-                if (hasSubgoals)
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor3;
-                    __result.subgoalAnchor = __instance.subgoalsAnchor3;
-                }
-                else
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor3NoSubgoals;
-                }
+                mainAnchorSubgoals = __instance.goalsAnchor3;
+                subgoalAnchor = __instance.subgoalsAnchor3;
                 __result.framesAnchor = __instance.framesAnchor3;
                 __result.toolboxAnchor = __instance.toolsAnchor3;
                 break;
@@ -46,15 +40,8 @@ internal class LevelPage_ComputeLayout
                 __result.backgroundId = "background_ingame_wide4";
                 rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor4NoSubgoals;
-                if (hasSubgoals)
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor4;
-                    __result.subgoalAnchor = __instance.subgoalsAnchor4;
-                }
-                else
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor4NoSubgoals;
-                }
+                mainAnchorSubgoals = __instance.goalsAnchor4;
+                subgoalAnchor = __instance.subgoalsAnchor4;
                 __result.framesAnchor = __instance.framesAnchor4;
                 __result.toolboxAnchor = __instance.toolsAnchor4;
                 break;
@@ -64,15 +51,8 @@ internal class LevelPage_ComputeLayout
                 __result.backgroundId = "background_ingame_wide6";
                 rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor6NoSubgoals;
-                if (hasSubgoals)
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor6;
-                    __result.subgoalAnchor = __instance.subgoalsAnchor6;
-                }
-                else
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor6NoSubgoals;
-                }
+                mainAnchorSubgoals = __instance.goalsAnchor6;
+                subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor6;
                 __result.toolboxAnchor = __instance.toolsAnchor6;
                 break;
@@ -82,15 +62,8 @@ internal class LevelPage_ComputeLayout
                 __result.backgroundId = "background_ingame_wide8";
                 rows = 2;
                 __result.mainGoalAnchor = __instance.goalsAnchor8;
-                if (hasSubgoals)
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor6;
-                    __result.subgoalAnchor = __instance.subgoalsAnchor6;
-                }
-                else
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor8;
-                }
+                mainAnchorSubgoals = __instance.goalsAnchor6;
+                subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor8;
                 __result.toolboxAnchor = __instance.toolsAnchor8;
                 break;
@@ -99,25 +72,40 @@ internal class LevelPage_ComputeLayout
                 __result.backgroundId = "background_ingame_wide4";
                 rows = 3;
                 __result.mainGoalAnchor = __instance.goalsAnchor4NoSubgoals;
-                if (hasSubgoals)
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor4;
-                    __result.subgoalAnchor = __instance.subgoalsAnchor4;
-                }
-                else
-                {
-                    __result.mainGoalAnchorPostSubgoalReveal = __instance.goalsAnchor4NoSubgoals;
-                }
+                mainAnchorSubgoals = __instance.goalsAnchor4;
+                subgoalAnchor = __instance.subgoalsAnchor4;
                 __result.framesAnchor = __instance.framesAnchor4;
                 __result.toolboxAnchor = __instance.toolsAnchor4;
                 break;
+        }
+        if (spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked()))
+        {
+            __result.mainGoalAnchorPostSubgoalReveal = mainAnchorSubgoals;
+            __result.subgoalAnchor = subgoalAnchor;
+        }
+        else
+        {
+            __result.mainGoalAnchorPostSubgoalReveal = __result.mainGoalAnchor;
         }
         int cols = (frames - 1) / rows + 1;
 
         __result.framesToolboxSeparatorY = frames < 4 ? -0.32f : -0.55f;
         __result.actorsScale = frames < 4 ? 1.1f : 1.06f;
-        __result.framesContainerScale = frames < 7 ? 1.0f : 0.78f;
-        __result.usesCompactFrames = frames < 7;
+        if (frames < 7)
+        {
+            __result.framesContainerScale = 1.0f;
+            __result.usesCompactFrames = false;
+        }
+        else if (frames < 9)
+        {
+            __result.framesContainerScale = 0.78f;
+            __result.usesCompactFrames = true;
+        }
+        else
+        {
+            __result.framesContainerScale = 0.66f;
+            __result.usesCompactFrames = true;
+        }
 
         __result.settingIdSuffix = settingIdSuffix;
         __result.supportedSettingSuffixes = new string[] { settingIdSuffix, "wide3", "wide6" };
