@@ -45,7 +45,7 @@ internal class LevelPage_ComputeLayout
                 break;
             case 5:
             case 6:
-            case > 9:
+            case > 9 and < 13:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide6";
                 __result.mainGoalAnchor = __instance.goalsAnchor6NoSubgoals;
@@ -54,8 +54,7 @@ internal class LevelPage_ComputeLayout
                 __result.framesAnchor = __instance.framesAnchor6;
                 __result.toolboxAnchor = __instance.toolsAnchor6;
                 break;
-            case 7:
-            case 8:
+            default:
                 settingIdSuffix = "wide3";
                 __result.backgroundId = "background_ingame_wide8";
                 __result.mainGoalAnchor = __instance.goalsAnchor8;
@@ -98,8 +97,12 @@ internal class LevelPage_ComputeLayout
                 __result.framesContainerScale = 0.78f;
                 __result.usesCompactFrames = true;
                 break;
-            default:
+            case < 13:
                 __result.framesContainerScale = 0.66f;
+                __result.usesCompactFrames = true;
+                break;
+            default:
+                __result.framesContainerScale = 0.51f;
                 __result.usesCompactFrames = true;
                 break;
         }
