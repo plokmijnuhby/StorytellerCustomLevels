@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using UnityEngine;
 
 namespace CustomLevels.hooks;
@@ -22,6 +23,13 @@ internal class LevelPage_ComputeLayout
         string settingIdSuffix;
         Transform mainAnchorSubgoals;
         Transform subgoalAnchor;
+        int rows = (int)Math.Sqrt(frames);
+        bool inSquare = frames == rows * rows;
+        if (rows % 2 == 1 && (frames - 1) / rows > rows)
+        {
+            rows++;
+            inSquare = true;
+        }
         switch (frames)
         {
             case < 4:
@@ -32,9 +40,19 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor3;
                 __result.framesAnchor = __instance.framesAnchor3;
                 __result.toolboxAnchor = __instance.toolsAnchor3;
+                rows = 1;
                 break;
-            case 4:
-            case 9:
+            case 7:
+            case 8:
+                settingIdSuffix = "wide3";
+                __result.backgroundId = "background_ingame_wide8";
+                __result.mainGoalAnchor = __instance.goalsAnchor8;
+                mainAnchorSubgoals = __instance.goalsAnchor6;
+                subgoalAnchor = __instance.subgoalsAnchor6;
+                __result.framesAnchor = __instance.framesAnchor8;
+                __result.toolboxAnchor = __instance.toolsAnchor8;
+                break;
+            case int _ when inSquare:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide4";
                 __result.mainGoalAnchor = __instance.goalsAnchor4NoSubgoals;
@@ -43,9 +61,7 @@ internal class LevelPage_ComputeLayout
                 __result.framesAnchor = __instance.framesAnchor4;
                 __result.toolboxAnchor = __instance.toolsAnchor4;
                 break;
-            case 5:
-            case 6:
-            case > 9 and < 13:
+            default:
                 settingIdSuffix = "wide6";
                 __result.backgroundId = "background_ingame_wide6";
                 __result.mainGoalAnchor = __instance.goalsAnchor6NoSubgoals;
@@ -53,15 +69,6 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor6;
                 __result.toolboxAnchor = __instance.toolsAnchor6;
-                break;
-            default:
-                settingIdSuffix = "wide3";
-                __result.backgroundId = "background_ingame_wide8";
-                __result.mainGoalAnchor = __instance.goalsAnchor8;
-                mainAnchorSubgoals = __instance.goalsAnchor6;
-                subgoalAnchor = __instance.subgoalsAnchor6;
-                __result.framesAnchor = __instance.framesAnchor8;
-                __result.toolboxAnchor = __instance.toolsAnchor8;
                 break;
         }
         if (spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked()))
@@ -72,14 +79,6 @@ internal class LevelPage_ComputeLayout
         else
         {
             __result.mainGoalAnchorPostSubgoalReveal = __result.mainGoalAnchor;
-        }
-
-        int rows;
-        switch (frames)
-        {
-            case < 4: rows = 1; break;
-            case < 9: rows = 2; break;
-            default: rows = 3; break;
         }
         int cols = (frames - 1) / rows + 1;
 
@@ -97,12 +96,8 @@ internal class LevelPage_ComputeLayout
                 __result.framesContainerScale = 0.78f;
                 __result.usesCompactFrames = true;
                 break;
-            case < 13:
-                __result.framesContainerScale = 0.66f;
-                __result.usesCompactFrames = true;
-                break;
             default:
-                __result.framesContainerScale = 0.51f;
+                __result.framesContainerScale = 2f / rows;
                 __result.usesCompactFrames = true;
                 break;
         }
