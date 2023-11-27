@@ -174,9 +174,9 @@ internal class LevelUtils
         {
             throw new InvalidOperationException("Frames must be an integer");
         }
-        else if (frames < 0)
+        else if (frames <= 0)
         {
-            throw new InvalidOperationException("Frames cannot be negative");
+            throw new InvalidOperationException("Frames must be greater than 0");
         }
         curlevel.frames = frames;
 
