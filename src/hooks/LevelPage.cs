@@ -97,7 +97,7 @@ internal class LevelPage_ComputeLayout
                 __result.usesCompactFrames = true;
                 break;
             default:
-                __result.framesContainerScale = 2f / rows;
+                __result.framesContainerScale = (0.64f / rows - 0.01f) / 0.31f;
                 __result.usesCompactFrames = true;
                 break;
         }
