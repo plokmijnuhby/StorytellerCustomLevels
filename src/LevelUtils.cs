@@ -234,11 +234,11 @@ internal class LevelUtils
     {
         if (verbose[spec.id])
         {
-            Console.WriteLine("");
-            Console.WriteLine("Logging events:");
+            var logger = Plugin.logger;
+            logger.LogMessage("Logging events:");
             foreach (var storyEvent in story.events)
             {
-                Console.WriteLine($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
+                logger.LogInfo($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
             }
         }
         foreach (var (goalId, goal) in goalInfos[spec.id])
