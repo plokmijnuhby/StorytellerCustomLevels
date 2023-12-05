@@ -21,10 +21,10 @@ internal class LevelUtils
         LevelID.DogSandbox
     };
     static int currentSubgoals = 0;
-    static LevelSpec curlevel;
-    static readonly Dictionary<LevelID, bool> verbose = new();
     static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = new();
 
+    public static LevelSpec curlevel;
+    public static readonly Dictionary<LevelID, bool> verbose = new();
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
     public static readonly Dictionary<LevelID, string> filePaths = new();
     public static readonly Dictionary<(string, string), StoryConfig> solutions = new();

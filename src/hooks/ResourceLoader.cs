@@ -49,6 +49,10 @@ internal class ResourceLoader_HasAnimation
             __result = __result || Directory.GetFiles("./custom_levels/extra", id + "_*.png").Length != 0;
         }
         catch (IOException) { }
+        if (!__result && LevelUtils.verbose[LevelUtils.curlevel.id])
+        {
+            Plugin.logger.LogMessage("No animation for " + id);
+        }
     }
 }
 
