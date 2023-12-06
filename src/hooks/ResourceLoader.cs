@@ -73,7 +73,7 @@ internal class ResourceLoader_GetAnimation
         DateTime time;
         try
         {
-            string[] files = Directory.GetFiles("./custom_levels/extra", id + "_*.png");
+            string[] files = Directory.GetFiles("./custom_levels", id + "_*.png", SearchOption.AllDirectories);
             if (files.Length == 0)
             {
                 return true;

@@ -35,7 +35,7 @@ internal class ChapterUtils
         else
         {
             return Directory.GetDirectories("./custom_levels")
-                .Where(dir => Path.GetFileName(dir) != "extra").ToArray();
+                .Where(dir => Directory.GetFiles(dir, "*.txt").Length != 0).ToArray();
         }
     }
 
