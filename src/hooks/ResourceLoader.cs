@@ -3,6 +3,7 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace CustomLevels.hooks;
@@ -42,11 +43,23 @@ internal class ResourceLoader_GetSprite
 [HarmonyPatch(typeof(ResourceLoader), nameof(ResourceLoader.HasAnimation))]
 internal class ResourceLoader_HasAnimation
 {
+    public static string GetFile(string id)
+    {
+        string[] files = Directory.GetFiles("./custom_levels", id + "_*.png", SearchOption.AllDirectories);
+        string[] extraFiles = Directory.GetFiles("./custom_levels", id + ".png", SearchOption.AllDirectories);
+        files = files.Concat(extraFiles).ToArray();
+        if (files.Length == 0)
+        {
+            return null;
+        }
+        return files[0];
+    }
+
     static void Postfix(string id, ref bool __result)
     {
         try
         {
-            __result = __result || Directory.GetFiles("./custom_levels/extra", id + "_*.png").Length != 0;
+            __result = __result || GetFile(id) != null;
         }
         catch (IOException) { }
         if (!__result && LevelUtils.verbose[LevelUtils.curlevel.id])
@@ -73,12 +86,11 @@ internal class ResourceLoader_GetAnimation
         DateTime time;
         try
         {
-            string[] files = Directory.GetFiles("./custom_levels", id + "_*.png", SearchOption.AllDirectories);
-            if (files.Length == 0)
+            file = ResourceLoader_HasAnimation.GetFile(id);
+            if (file == null)
             {
                 return true;
             }
-            file = files[0];
             time = File.GetLastWriteTimeUtc(file);
             if(cache.TryGetValue(id, out var cached) && cached.Item1 == time)
             {
@@ -91,8 +103,13 @@ internal class ResourceLoader_GetAnimation
         {
             return true;
         }
-        string frameString = file[(file.LastIndexOf('_')+1)..].Split('.')[0];
-        if (!int.TryParse(frameString, out int frames))
+        file = Path.GetFileNameWithoutExtension(file);
+        int frames;
+        if (file.Length == id.Length)
+        {
+            frames = 1;
+        }
+        else if (!int.TryParse(file[(id.Length + 1)..], out frames))
         {
             return true;
         }
