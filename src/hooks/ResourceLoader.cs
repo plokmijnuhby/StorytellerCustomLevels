@@ -77,7 +77,7 @@ internal class ResourceLoader_GetAnimation
     // so we must maintain a cache to avoid reading the image file every time,
     // which is slow
 
-    static Dictionary<string, (DateTime, FrameSpec[])> cache = new();
+    static Dictionary<string, (string, DateTime, FrameSpec[])> cache = new();
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
@@ -92,10 +92,13 @@ internal class ResourceLoader_GetAnimation
                 return true;
             }
             time = File.GetLastWriteTimeUtc(file);
-            if(cache.TryGetValue(id, out var cached) && cached.Item1 == time)
+            if (cache.TryGetValue(id, out var cached))
             {
-                __result = cached.Item2;
-                return false;
+                (string oldFile, DateTime oldTime, __result) = cached;
+                if (oldFile == file && oldTime == time)
+                {
+                    return false;
+                }
             }
             data = File.ReadAllBytes(file);
         }
@@ -127,7 +130,7 @@ internal class ResourceLoader_GetAnimation
                 ppu = 614
             };
         }
-        cache[id] = (time, __result);
+        cache[id] = (file, time, __result);
         return false;
     }
 }
