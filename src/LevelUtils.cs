@@ -238,7 +238,7 @@ internal class LevelUtils
             logger.LogMessage("Logging events:");
             foreach (var storyEvent in story.events)
             {
-                logger.LogInfo($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
+                logger.LogMessage($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
             }
         }
         foreach (var (goalId, goal) in goalInfos[spec.id])
