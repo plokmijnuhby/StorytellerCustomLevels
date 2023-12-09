@@ -256,6 +256,7 @@ internal class LevelUtils
         musicSources.Clear();
         verbose.Clear();
     }
+
     public static void LoadLevel(LevelID id)
     {
         if (!allowedIDs.Contains(id)) return;
@@ -299,6 +300,30 @@ internal class LevelUtils
 
         Campaign.End();
         Campaign.goalDescriptions.Clear();
-        Storyteller.game.VerifyClaimedSolutionsToLevel(id);
+
+        var game = Storyteller.game;
+        var newSolutions = game.savegame.solutions;
+        var oldSolutions = newSolutions.ToArray();
+        newSolutions.Clear();
+        foreach (var solution in oldSolutions)
+        {
+            if (solution.levelID != id)
+            {
+                newSolutions.Add(solution);
+            }
+        }
+        foreach (var ((file, goal), config) in solutions)
+        {
+            if (file == filePaths[id])
+            {
+                newSolutions.Add(new GoalSolution
+                {
+                    goalId = goal,
+                    levelID = id,
+                    config = config
+                });
+            }
+        }
+        game.VerifyClaimedSolutionsToLevel(id);
     }
 }
