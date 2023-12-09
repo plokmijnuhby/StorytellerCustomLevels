@@ -90,3 +90,19 @@ internal class Storyteller_GrantStamp
         return !ChapterUtils.allowedIDs.Contains(levelId);
     }
 }
+
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.VerifyClaimedSolutionsToLevel))]
+internal class Storyteller_VerifyClaimedSolutionsToLevel
+{
+    static void Postfix(Storyteller __instance)
+    {
+        GoalSolution[] solutions = __instance.savegame.solutions.ToArray();
+        foreach (var ((file, goal), config) in LevelUtils.solutions)
+        {
+            if (!solutions.Any(solution => solution.goalId == goal))
+            {
+                LevelUtils.solutions.Remove((file, goal));
+            }
+        }
+    }
+}
