@@ -57,15 +57,15 @@ internal class ResourceLoader_HasAnimation
 
     static void Postfix(string id, ref bool __result)
     {
+        if (LevelUtils.verbose[LevelUtils.curlevel.id])
+        {
+            Plugin.logger.LogMessage("Looking for asset " + id);
+        }
         try
         {
             __result = __result || GetFile(id) != null;
         }
         catch (IOException) { }
-        if (!__result && LevelUtils.verbose[LevelUtils.curlevel.id])
-        {
-            Plugin.logger.LogMessage("No animation for " + id);
-        }
     }
 }
 
