@@ -63,7 +63,7 @@ internal class ResourceLoader_HasAnimation
             }
             else
             {
-                Plugin.logger.LogMessage("No asset avialable for " + id);
+                Plugin.logger.LogMessage("No asset available for " + id);
             }
         }
     }
