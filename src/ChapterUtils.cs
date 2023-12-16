@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace CustomLevels;
 internal class ChapterUtils
@@ -30,27 +31,24 @@ internal class ChapterUtils
         return activeIndex > insertionPoint && activeIndex <= insertionPoint + addedPages;
     }
 
+    static IEnumerable<string> GetLevels(string dir)
+    {
+        return Directory.EnumerateFiles(dir, "*.txt")
+            .Where(file => Path.GetFileName(file) != "actors.txt");
+    }
+
     static IEnumerable<string> GetFolders()
     {
         if (!Directory.Exists("./custom_levels"))
         {
             Directory.CreateDirectory("./custom_levels");
             // Obviously there won't be any folders in this case
-            yield break;
+            return [];
         }
         else
         {
-            foreach (string dir in Directory.EnumerateDirectories("./custom_levels"))
-            {
-                foreach (string file in Directory.EnumerateFiles(dir, "*.txt"))
-                {
-                    if (Path.GetFileNameWithoutExtension(file) != "actors")
-                    {
-                        yield return dir;
-                        break;
-                    }
-                }
-            }
+            return Directory.EnumerateDirectories("./custom_levels")
+                .Where(dir => GetLevels(dir).Any());
         }
     }
 
@@ -135,20 +133,21 @@ internal class ChapterUtils
         Campaign.curChapter = customChapter;
         Campaign.chapterLevelNumber = 1;
 
-        string[] files;
+        IEnumerable<string> files;
         if (currentChapterPath == null)
         {
-            files = Directory.GetFiles("./custom_levels", "*.txt");
+            files = GetLevels("./custom_levels");
             Text.AddText("chapter_title_custom_levels", "Custom levels", Array.Empty<string>());
         }
         else
         {
-            files = Directory.GetFiles(currentChapterPath, "*.txt");
+            files = Directory.GetFiles(currentChapterPath);
             string chapterName = SplitWhitespace(currentChapterPath).Last();
             Text.AddText("chapter_title_custom_levels", chapterName, Array.Empty<string>());
         }
-        Array.Sort(files, Compare);
-        foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))
+        string[] fileArray = files.ToArray();
+        Array.Sort(fileArray, Compare);
+        foreach (var (file, id) in Enumerable.Zip(fileArray, allowedIDs))
         {
             string name = SplitWhitespace(file, true).Last();
             Campaign.AddLevel(name.Replace('_', ' '), id);
