@@ -30,18 +30,27 @@ internal class ChapterUtils
         return activeIndex > insertionPoint && activeIndex <= insertionPoint + addedPages;
     }
 
-    static string[] GetFolders()
+    static IEnumerable<string> GetFolders()
     {
         if (!Directory.Exists("./custom_levels"))
         {
             Directory.CreateDirectory("./custom_levels");
             // Obviously there won't be any folders in this case
-            return [];
+            yield break;
         }
         else
         {
-            return Directory.GetDirectories("./custom_levels")
-                .Where(dir => Directory.EnumerateFiles(dir, "*.txt").Any()).ToArray();
+            foreach (string dir in Directory.EnumerateDirectories("./custom_levels"))
+            {
+                foreach (string file in Directory.EnumerateFiles(dir, "*.txt"))
+                {
+                    if (Path.GetFileNameWithoutExtension(file) != "actors")
+                    {
+                        yield return dir;
+                        break;
+                    }
+                }
+            }
         }
     }
 
