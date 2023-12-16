@@ -88,6 +88,11 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
+        if (!(Storyteller.game.currentPage is LevelPage l) || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
+        {
+            return true;
+        }
+
         string file;
         byte[] data;
         DateTime time;
