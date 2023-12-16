@@ -47,7 +47,7 @@ internal class ResourceLoader_HasAnimation
     {
         string[] files = Directory.GetFiles("./custom_levels", id + "_*.png", SearchOption.AllDirectories);
         string[] extraFiles = Directory.GetFiles("./custom_levels", id + ".png", SearchOption.AllDirectories);
-        files = files.Concat(extraFiles).ToArray();
+        files = [.. files, .. extraFiles];
         if (files.Length == 0)
         {
             return null;
@@ -88,7 +88,7 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
-        if (!(Storyteller.game.currentPage is LevelPage l) || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
+        if (Storyteller.game.currentPage is not LevelPage l || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
         {
             return true;
         }

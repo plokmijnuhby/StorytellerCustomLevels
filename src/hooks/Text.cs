@@ -9,7 +9,7 @@ internal class Text_GetActorLabel
 {
     static bool Prefix(ActorId id, ref string __result)
     {
-        if (!(Storyteller.game.currentPage is LevelPage l) || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
+        if (Storyteller.game.currentPage is not LevelPage l || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
         {
             return true;
         }
