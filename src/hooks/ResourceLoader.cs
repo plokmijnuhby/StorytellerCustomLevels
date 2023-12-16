@@ -57,6 +57,10 @@ internal class ResourceLoader_HasAnimation
 
     static void Postfix(string id, ref bool __result)
     {
+        if (Storyteller.game.currentPage is not LevelPage l || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
+        {
+            return;
+        }
         try
         {
             __result = __result || GetFile(id) != null;
