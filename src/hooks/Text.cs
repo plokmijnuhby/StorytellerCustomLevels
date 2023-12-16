@@ -8,7 +8,7 @@ internal class Text_GetActorLabel
 {
     static bool Prefix(ActorId id, ref string __result)
     {
-        if (!ChapterUtils.InCustomLevel())
+        if (!ChapterUtils.IsInCustomLevel())
         {
             return true;
         }

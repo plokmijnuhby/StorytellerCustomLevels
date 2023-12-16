@@ -24,9 +24,10 @@ internal class ChapterUtils
         LevelID.DogSandbox
     ];
 
-    public static bool InCustomLevel()
+    public static bool IsInCustomLevel()
     {
-        return Storyteller.game.currentPage is LevelPage l && allowedIDs.Contains(l.level.spec.id);
+        int activeIndex = Storyteller.game.activePageIndex;
+        return activeIndex > insertionPoint && activeIndex <= insertionPoint + addedPages;
     }
 
     static string[] GetFolders()

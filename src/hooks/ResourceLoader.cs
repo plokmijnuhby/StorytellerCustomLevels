@@ -44,7 +44,7 @@ internal class ResourceLoader_HasAnimation
 {
     static void Postfix(string id, ref bool __result)
     {
-        if (!ChapterUtils.InCustomLevel())
+        if (!ChapterUtils.IsInCustomLevel())
         {
             return;
         }
@@ -81,7 +81,7 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
-        if (!ChapterUtils.InCustomLevel())
+        if (!ChapterUtils.IsInCustomLevel())
         {
             return true;
         }
