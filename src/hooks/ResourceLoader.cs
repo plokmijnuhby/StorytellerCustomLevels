@@ -85,32 +85,32 @@ internal class ResourceLoader_GetAnimation
         {
             return true;
         }
-        string file;
+        string fullFilePath;
         byte[] data;
         DateTime time;
         try
         {
-            file = ChapterUtils.GetFile(id + ".png") ?? ChapterUtils.GetFile(id + "_*.png");
-            if (file == null)
+            fullFilePath = ChapterUtils.GetFile(id + ".png") ?? ChapterUtils.GetFile(id + "_*.png");
+            if (fullFilePath == null)
             {
                 return true;
             }
-            time = File.GetLastWriteTimeUtc(file);
+            time = File.GetLastWriteTimeUtc(fullFilePath);
             if (cache.TryGetValue(id, out var cached))
             {
                 (string oldFile, DateTime oldTime, __result) = cached;
-                if (oldFile == file && oldTime == time)
+                if (oldFile == fullFilePath && oldTime == time)
                 {
                     return false;
                 }
             }
-            data = File.ReadAllBytes(file);
+            data = File.ReadAllBytes(fullFilePath);
         }
         catch (IOException)
         {
             return true;
         }
-        file = Path.GetFileNameWithoutExtension(file);
+        string file = Path.GetFileNameWithoutExtension(fullFilePath);
         int frames;
         if (file.Length == id.Length)
         {
@@ -135,7 +135,7 @@ internal class ResourceLoader_GetAnimation
                 ppu = 614
             };
         }
-        cache[id] = (file, time, __result);
+        cache[id] = (fullFilePath, time, __result);
         return false;
     }
 }
