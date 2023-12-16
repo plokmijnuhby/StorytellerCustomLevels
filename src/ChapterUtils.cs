@@ -40,7 +40,7 @@ internal class ChapterUtils
         else
         {
             return Directory.GetDirectories("./custom_levels")
-                .Where(dir => Directory.GetFiles(dir, "*.txt").Length != 0).ToArray();
+                .Where(dir => Directory.EnumerateFiles(dir, "*.txt").Any()).ToArray();
         }
     }
 
@@ -54,20 +54,20 @@ internal class ChapterUtils
         {
             try
             {
-                string[] files = Directory.GetFiles(currentChapterPath, path);
-                if (files.Length != 0)
+                string file = Directory.EnumerateFiles(currentChapterPath, path).FirstOrDefault((string)null);
+                if (file != null)
                 {
-                    return files[0];
+                    return file;
                 }
             }
             catch (IOException) { }
         }
         try
         {
-            string[] files = Directory.GetFiles("./custom_levels", path);
-            if (files.Length != 0)
+            string file = Directory.EnumerateFiles("./custom_levels", path).FirstOrDefault((string)null);
+            if (file != null)
             {
-                return files[0];
+                return file;
             }
         }
         catch (IOException) { }
