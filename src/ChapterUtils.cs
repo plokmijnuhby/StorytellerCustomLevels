@@ -39,6 +39,36 @@ internal class ChapterUtils
         }
     }
 
+    public static string GetFile(string path)
+    {
+        if (Storyteller.game.currentPage is not LevelPage l || !allowedIDs.Contains(l.level.spec.id))
+        {
+            return null;
+        }
+        if (currentChapterPath != null)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(currentChapterPath, path);
+                if (files.Length != 0)
+                {
+                    return files[0];
+                }
+            }
+            catch (IOException) { }
+        }
+        try
+        {
+            string[] files = Directory.GetFiles("./custom_levels", path);
+            if (files.Length != 0)
+            {
+                return files[0];
+            }
+        }
+        catch (IOException) { }
+        return null;
+    }
+
     static string[] SplitWhitespace(string x, bool extension = false)
     {
         string name;

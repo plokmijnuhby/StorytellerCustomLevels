@@ -43,27 +43,13 @@ internal class ResourceLoader_GetSprite
 [HarmonyPatch(typeof(ResourceLoader), nameof(ResourceLoader.HasAnimation))]
 internal class ResourceLoader_HasAnimation
 {
-    public static string GetFile(string id)
-    {
-        string[] files = Directory.GetFiles("./custom_levels", id + "_*.png", SearchOption.AllDirectories);
-        string[] extraFiles = Directory.GetFiles("./custom_levels", id + ".png", SearchOption.AllDirectories);
-        files = [.. files, .. extraFiles];
-        if (files.Length == 0)
-        {
-            return null;
-        }
-        return files[0];
-    }
-
     static void Postfix(string id, ref bool __result)
     {
-        if (Storyteller.game.currentPage is not LevelPage l || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
-        {
-            return;
-        }
         try
         {
-            __result = __result || GetFile(id) != null;
+            __result = __result
+                || ChapterUtils.GetFile(id + ".png") != null
+                || ChapterUtils.GetFile(id + "_*.png") != null;
         }
         catch (IOException) { }
         if (LevelUtils.verbose[LevelUtils.curlevel.id])
@@ -92,17 +78,12 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
-        if (Storyteller.game.currentPage is not LevelPage l || !ChapterUtils.allowedIDs.Contains(l.level.spec.id))
-        {
-            return true;
-        }
-
         string file;
         byte[] data;
         DateTime time;
         try
         {
-            file = ResourceLoader_HasAnimation.GetFile(id);
+            file = ChapterUtils.GetFile(id + ".png") ?? ChapterUtils.GetFile(id + "_*.png");
             if (file == null)
             {
                 return true;
