@@ -126,9 +126,10 @@ internal class ResourceLoader_GetAnimation
         float width = tex.width / (float)frames;
         for (int i = 0; i < frames; i++)
         {
+            var sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, 15f / tex.height), 614);
             __result[i] = new FrameSpec()
             {
-                sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, 0.1f), 614),
+                sprite = sprite,
                 details = Array.Empty<FrameDetail>(),
                 padding = 15,
                 ppu = 614
