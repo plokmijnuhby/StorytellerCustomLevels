@@ -47,10 +47,6 @@ internal class ChapterUtils
 
     public static string GetFile(string path)
     {
-        if (Storyteller.game.currentPage is not LevelPage l || !allowedIDs.Contains(l.level.spec.id))
-        {
-            return null;
-        }
         if (currentChapterPath != null)
         {
             try
