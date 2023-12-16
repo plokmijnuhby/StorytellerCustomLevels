@@ -9,6 +9,10 @@ internal class Text_GetActorLabel
 {
     static bool Prefix(ActorId id, ref string __result)
     {
+        if (!ChapterUtils.InCustomLevel())
+        {
+            return true;
+        }
         string file = ChapterUtils.GetFile("actors.txt");
         if (file == null)
         {

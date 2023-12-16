@@ -3,7 +3,6 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace CustomLevels.hooks;
@@ -45,6 +44,10 @@ internal class ResourceLoader_HasAnimation
 {
     static void Postfix(string id, ref bool __result)
     {
+        if (!ChapterUtils.InCustomLevel())
+        {
+            return;
+        }
         try
         {
             __result = __result
@@ -78,6 +81,10 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
+        if (!ChapterUtils.InCustomLevel())
+        {
+            return true;
+        }
         string file;
         byte[] data;
         DateTime time;
