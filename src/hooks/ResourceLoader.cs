@@ -124,9 +124,10 @@ internal class ResourceLoader_GetAnimation
         tex.LoadImage(data, true);
         __result = new(frames);
         float width = tex.width / (float)frames;
+        float pivotY = id.StartsWith("toolbox_") ? 0.5f : 15f / tex.height; 
         for (int i = 0; i < frames; i++)
         {
-            var sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, 15f / tex.height), 614);
+            var sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, pivotY), 614);
             __result[i] = new FrameSpec()
             {
                 sprite = sprite,
