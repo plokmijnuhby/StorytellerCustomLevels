@@ -8,8 +8,8 @@ namespace CustomLevels;
 
 internal class LevelUtils
 {
-    static readonly LevelID[] allowedIDs = new LevelID[]
-    {
+    static readonly LevelID[] allowedIDs =
+    [
         // Unused levels, can be overwritten relatively safely.
         // We can only have 7 or we'll run out of space to display them.
         LevelID.GenesisSandbox,
@@ -19,15 +19,15 @@ internal class LevelUtils
         LevelID.MansionSandbox,
         LevelID.GothicSandbox,
         LevelID.DogSandbox
-    };
+    ];
     static int currentSubgoals = 0;
-    static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = new();
+    static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = [];
 
     public static LevelSpec curlevel;
-    public static readonly Dictionary<LevelID, bool> verbose = new();
-    public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = new();
-    public static readonly Dictionary<LevelID, string> filePaths = new();
-    public static readonly Dictionary<(string, string), StoryConfig> solutions = new();
+    public static readonly Dictionary<LevelID, bool> verbose = [];
+    public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = [];
+    public static readonly Dictionary<LevelID, string> filePaths = [];
+    public static readonly Dictionary<(string, string), StoryConfig> solutions = [];
 
     static T GetEnum<T>(string name) where T : struct
     {
@@ -264,7 +264,7 @@ internal class LevelUtils
         Campaign.Begin(id, 3);
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
-        goalInfos[id] = new();
+        goalInfos[id] = [];
         verbose[id] = false;
         musicSources[id] = default;
 

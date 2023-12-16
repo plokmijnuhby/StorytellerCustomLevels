@@ -11,8 +11,8 @@ internal class ChapterUtils
     public static int insertionPoint;
     static int addedPages = 0;
     public static string currentChapterPath;
-    public static readonly LevelID[] allowedIDs = new LevelID[]
-    {
+    public static readonly LevelID[] allowedIDs =
+    [
         // Unused levels, can be overwritten relatively safely.
         // We can only have 7 or we'll run out of space to display them.
         LevelID.GenesisSandbox,
@@ -22,7 +22,7 @@ internal class ChapterUtils
         LevelID.MansionSandbox,
         LevelID.GothicSandbox,
         LevelID.DogSandbox
-    };
+    ];
 
     static string[] GetFolders()
     {
@@ -30,7 +30,7 @@ internal class ChapterUtils
         {
             Directory.CreateDirectory("./custom_levels");
             // Obviously there won't be any folders in this case
-            return new string[0];
+            return [];
         }
         else
         {
@@ -81,7 +81,7 @@ internal class ChapterUtils
         return res;
     }
 
-    static Comparer<string> comparer = Comparer<string>.Create(Compare);
+    static readonly Comparer<string> comparer = Comparer<string>.Create(Compare);
 
     public static void LoadChapter()
     {
@@ -98,13 +98,13 @@ internal class ChapterUtils
         if (currentChapterPath == null)
         {
             files = Directory.GetFiles("./custom_levels", "*.txt");
-            Text.AddText("chapter_title_custom_levels", "Custom levels", new string[0]);
+            Text.AddText("chapter_title_custom_levels", "Custom levels", Array.Empty<string>());
         }
         else
         {
             files = Directory.GetFiles(currentChapterPath, "*.txt");
             string chapterName = SplitWhitespace(currentChapterPath).Last();
-            Text.AddText("chapter_title_custom_levels", chapterName, new string[0]);
+            Text.AddText("chapter_title_custom_levels", chapterName, Array.Empty<string>());
         }
         Array.Sort(files, Compare);
         foreach (var (file, id) in Enumerable.Zip(files, allowedIDs))

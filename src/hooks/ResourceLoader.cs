@@ -84,7 +84,7 @@ internal class ResourceLoader_GetAnimation
     // so we must maintain a cache to avoid reading the image file every time,
     // which is slow
 
-    static Dictionary<string, (string, DateTime, FrameSpec[])> cache = new();
+    static readonly Dictionary<string, (string, DateTime, FrameSpec[])> cache = [];
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
@@ -137,7 +137,7 @@ internal class ResourceLoader_GetAnimation
             __result[i] = new FrameSpec()
             {
                 sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, 0.1f), 614),
-                details = new FrameDetail[0],
+                details = Array.Empty<FrameDetail>(),
                 padding = 15,
                 ppu = 614
             };
