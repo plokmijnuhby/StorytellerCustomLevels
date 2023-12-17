@@ -141,7 +141,7 @@ internal class ChapterUtils
         }
         else
         {
-            files = Directory.GetFiles(currentChapterPath);
+            files = GetLevels(currentChapterPath);
             string chapterName = SplitWhitespace(currentChapterPath).Last();
             Text.AddText("chapter_title_custom_levels", chapterName, Array.Empty<string>());
         }
