@@ -125,7 +125,7 @@ internal class ResourceLoader_GetAnimation
         __result = new(frames);
         float width = tex.width / (float)frames;
         string actor_name = id.Split('_', 2)[0];
-        float pivotY = Animations.actorIds.ContainsValue(actor_name) ? 15.94f / tex.height : 0.5f;
+        float pivotY = Animations.actorIds.ContainsValue(actor_name) ? 15f / tex.height : 0.5f;
         for (int i = 0; i < frames; i++)
         {
             var sprite = Sprite.Create(tex, new Rect(width * i, 0, width, tex.height), new Vector2(0.5f, pivotY), 614);
