@@ -28,7 +28,7 @@ internal class LevelUtils
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = [];
     public static readonly Dictionary<LevelID, string> filePaths = [];
     public static readonly Dictionary<(string, string), StoryConfig> solutions = [];
-    public static List<Event> eventList = [];
+    public static List<Event> events = [];
 
     static T GetEnum<T>(string name) where T : struct
     {
@@ -271,7 +271,7 @@ internal class LevelUtils
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
-        eventList.Clear();
+        events.Clear();
 
         try
         {
@@ -290,20 +290,20 @@ internal class LevelUtils
                 foreach (string line in File.ReadLines(events))
                 {
                     string[] lineParts = line.Split();
-                    var @event = new Event()
+                    var e = new Event()
                     {
                         type = GetEnum<ET>(lineParts[0]),
                         frame = -1
                     };
                     if (lineParts.Length > 1)
                     {
-                        @event.source = GetEnum<ActorId>(lineParts[1]);
+                        e.source = GetEnum<ActorId>(lineParts[1]);
                     }
                     if (lineParts.Length > 2)
                     {
-                        @event.target = GetEnum<ActorId>(lineParts[2]);
+                        e.target = GetEnum<ActorId>(lineParts[2]);
                     }
-                    eventList.Add(@event);
+                    LevelUtils.events.Add(e);
                 }
             }
         }

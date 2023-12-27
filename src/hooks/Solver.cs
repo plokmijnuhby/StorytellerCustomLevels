@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 /*
@@ -17,10 +18,23 @@ namespace CustomLevels.hooks;
 internal class Solver_Solve
 {
     internal static bool addingQueen = false;
+    internal static List<Event> events = [];
     static void Prefix()
     {
         addingQueen = true;
     }
+
+    internal static void FixEvents(Il2CppSystem.Collections.Generic.HashSet<ActorId> chars)
+    {
+        events.Clear();
+        foreach (Event e in LevelUtils.events)
+        {
+            if (chars.Contains(e.source) && chars.Contains(e.target))
+            {
+                events.Add(e);
+            }
+        }
+    } 
 }
 
 [HarmonyPatch(typeof(Solver), nameof(Solver.ToolboxChars))]
@@ -54,7 +68,7 @@ internal class Solver_Add
         Event[] events = story.events;
         if (events.Length == 0)
         {
-            events = [.. LevelUtils.eventList];
+            events = [.. Solver_Solve.events];
         }
         if (Solver_Solve.addingQueen && source == ActorId.Queen)
         {
@@ -70,7 +84,7 @@ internal class Solver_Add
             target = target
         };
         List<Event> eventList = [.. events];
-        eventList.Insert(eventList.Count - LevelUtils.eventList.Count, __result);
+        eventList.Insert(eventList.Count - LevelUtils.events.Count, __result);
         story.events = eventList.ToArray();
         return false;
     }
