@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 /*
  * This one is confusing.
