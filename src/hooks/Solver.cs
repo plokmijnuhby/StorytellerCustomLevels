@@ -28,6 +28,9 @@ internal class Solver_ToolboxChars
 {
     static void Postfix(Il2CppSystem.Collections.Generic.HashSet<ActorId> __result)
     {
+        // We shouldn't add queen if king is also there,
+        // because this would also add events to do with them being married,
+        // which we'd have to clear up.
         if (__result.Contains(ActorId.Queen) || __result.Contains(ActorId.King))
         {
             Solver_Solve.addingQueen = false;
