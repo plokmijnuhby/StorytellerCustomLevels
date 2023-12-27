@@ -87,7 +87,7 @@ internal class Solver_Add
             target = target
         };
         List<Event> eventList = [.. events];
-        eventList.Insert(eventList.Count - LevelUtils.events.Count, __result);
+        eventList.Insert(eventList.Count - Solver_Solve.events.Count, __result);
         story.events = eventList.ToArray();
         return false;
     }
