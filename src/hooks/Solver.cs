@@ -54,6 +54,8 @@ internal class Solver_ToolboxChars
         {
             __result.Add(ActorId.Queen);
         }
+
+        Solver_Solve.FixEvents(__result);
     }
 }
 
