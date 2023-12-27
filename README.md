@@ -46,9 +46,11 @@ To see possible values for the arguments, you will probably need to consult [the
 
 Each subfolder in the `custom_levels` folder will be turned into a chapter. If there are no subfolders, then the `custom_levels` folder itself will become a chapter, and levels can be placed in the chapter directly. 
 
-## Extra assets and characters
+## Other types of file
 Some of the available actors, settings and levels do not appear in the main game, and thus may have missing assets. Even if you avoid these, some sets of interactions (eg pushing Lenora off a cliff) may not work quite correctly. For these scenarios, there is a way to add in or replace assets - simply place a png file with the correct name in the `custom_levels` folder or the chapter folder, and it will be used correctly. To add a still image as an asset, the name of the png file should be the name of the asset, eg `adamgen_idle.png`. To add an animation, add the number of frames in the animation, eg `adamgen_idle_5.png`, and the image will be split into that number of frames. You can obtain the names of assets using the `Verbose` command in a level.
 
 There is one asset that has special behaviour. Putting an image called `illustration.png` in a chapter folder will cause that image to be displayed as the illustration, to the left of the levels. The image should have dimensions 818x1228, although the edges of the image will always be overwritten by the image border.
 
 To add another character to the game, you need to overwrite an existing actor. There are some unused actors you can use, such as `BlackCat`. You need to replace all the relevant animations, and also their name (so that they will be correctly shown in the toolbox). To replace the names of actors, create a file called `actors.txt` in the `custom_levels` folder or the chapter folder, and write a line for each new character giving the actor id and new name, eg `BlackCat Bard` to rename `BlackCat` to `Bard`.
+
+You may wish for some characters to start a level with special properties, which you can do by adding fixed events. To do this, create a file called `events.txt` and specify the events you want to add. For instance, `TakesCrownFrom Baron` specifies that Baron starts the level wearing a crown.
