@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -44,25 +45,33 @@ internal class Solver_ToolboxChars
 [HarmonyPatch(typeof(Solver), nameof(Solver.Add))]
 internal class Solver_Add
 {
-    static bool Prefix(Story story, ref int frame, ET type)
+    static bool Prefix(Story story, int frame, ET type, ActorId source, ActorId target, ref Event __result)
     {
         if (frame > -1)
         {
             return true;
         }
-        else if (type == ET.TakesCrownFrom)
+        Event[] events = story.events;
+        if (events.Length == 0)
         {
-            bool addingQueen = Solver_Solve.addingQueen;
-
-            story.events = story.events.Concat(LevelUtils.eventList).ToArray();
-
+            events = [.. LevelUtils.eventList];
+        }
+        if (Solver_Solve.addingQueen && source == ActorId.Queen)
+        {
+            story.events = events;
             Solver_Solve.addingQueen = false;
-            return !addingQueen;
+            return false;
         }
-        else
+        __result = new Event
         {
-            frame = -2;
-            return true;
-        }
+            frame = -2,
+            type = type,
+            source = source,
+            target = target
+        };
+        List<Event> eventList = [.. events];
+        eventList.Insert(eventList.Count - LevelUtils.eventList.Count, __result);
+        story.events = eventList.ToArray();
+        return false;
     }
 }
