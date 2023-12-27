@@ -28,6 +28,7 @@ internal class LevelUtils
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = [];
     public static readonly Dictionary<LevelID, string> filePaths = [];
     public static readonly Dictionary<(string, string), StoryConfig> solutions = [];
+    public static List<Event> eventList = [];
 
     static T GetEnum<T>(string name) where T : struct
     {
@@ -270,6 +271,7 @@ internal class LevelUtils
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
+        eventList.Clear();
 
         try
         {
@@ -282,6 +284,21 @@ internal class LevelUtils
                     i = Process(lines, i);
                 }
             }
+            string events = ChapterUtils.GetFile("events.txt");
+            if (events != null)
+            {
+                foreach (string line in File.ReadLines(events))
+                {
+                    string[] lineParts = line.Split();
+                    eventList.Add(new Event()
+                    {
+                        type = GetEnum<ET>(lineParts[0]),
+                        source = GetEnum<ActorId>(lineParts[1]),
+                        target = GetEnum<ActorId>(lineParts[2]),
+                        frame = -1
+                    });
+                }
+            }
         }
         catch (InvalidOperationException ex)
         {
@@ -289,11 +306,11 @@ internal class LevelUtils
         }
         catch (IOException)
         {
-            ReportError("Level file deleted, renamed, or otherwise inaccessible");
+            ReportError("File deleted, renamed, or otherwise inaccessible");
         }
         catch (IndexOutOfRangeException)
         {
-            ReportError("Could not parse level file");
+            ReportError("Could not parse file");
         }
 
         Campaign.SetEval(DelegateSupport.ConvertDelegate<GoalsEvaluator>(EvalGoal));

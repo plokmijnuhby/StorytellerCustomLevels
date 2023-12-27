@@ -28,6 +28,9 @@
     <Reference Include="Il2Cppmscorlib">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Storyteller\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppSystem.Core">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Storyteller\BepInEx\interop\Il2CppSystem.Core.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Storyteller\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
     </Reference>

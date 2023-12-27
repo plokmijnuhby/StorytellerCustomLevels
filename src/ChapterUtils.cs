@@ -33,8 +33,10 @@ internal class ChapterUtils
 
     static IEnumerable<string> GetLevels(string dir)
     {
-        return Directory.EnumerateFiles(dir, "*.txt")
-            .Where(file => Path.GetFileName(file) != "actors.txt");
+        return from file in Directory.EnumerateFiles(dir, "*.txt")
+               where Path.GetFileName(file) != "actors.txt"
+               where Path.GetFileName(file) != "events.txt"
+               select file;
     }
 
     static IEnumerable<string> GetFolders()
