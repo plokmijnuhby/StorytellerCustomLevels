@@ -29,7 +29,8 @@ internal class Solver_Solve
         events.Clear();
         foreach (Event e in LevelUtils.events)
         {
-            if (chars.Contains(e.source) && chars.Contains(e.target))
+            if ((e.source == ActorId.None || chars.Contains(e.source))
+                && (e.target == ActorId.None || chars.Contains(e.target)))
             {
                 events.Add(e);
             }
