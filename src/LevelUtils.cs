@@ -290,13 +290,20 @@ internal class LevelUtils
                 foreach (string line in File.ReadLines(events))
                 {
                     string[] lineParts = line.Split();
-                    eventList.Add(new Event()
+                    var @event = new Event()
                     {
                         type = GetEnum<ET>(lineParts[0]),
-                        source = GetEnum<ActorId>(lineParts[1]),
-                        target = GetEnum<ActorId>(lineParts[2]),
                         frame = -1
-                    });
+                    };
+                    if (lineParts.Length > 1)
+                    {
+                        @event.source = GetEnum<ActorId>(lineParts[1]);
+                    }
+                    if (lineParts.Length > 2)
+                    {
+                        @event.target = GetEnum<ActorId>(lineParts[2]);
+                    }
+                    eventList.Add(@event);
                 }
             }
         }
