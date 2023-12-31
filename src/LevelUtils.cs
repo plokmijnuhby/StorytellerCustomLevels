@@ -289,6 +289,10 @@ internal class LevelUtils
             {
                 foreach (string line in File.ReadLines(events))
                 {
+                    if (line == "")
+                    {
+                        continue;
+                    }
                     string[] lineParts = line.Split();
                     var e = new Event()
                     {
