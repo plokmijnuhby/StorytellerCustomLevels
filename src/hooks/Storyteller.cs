@@ -94,14 +94,14 @@ internal class Storyteller_GrantStamp
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.VerifyClaimedSolutionsToLevel))]
 internal class Storyteller_VerifyClaimedSolutionsToLevel
 {
-    static void Postfix(Storyteller __instance)
+    static void Postfix(Storyteller __instance, LevelID id)
     {
         GoalSolution[] solutions = __instance.savegame.solutions.ToArray();
-        foreach (var ((file, goal), config) in LevelUtils.solutions)
+        foreach (GoalSpec goal in Campaign.levelSpecs[id].goals)
         {
-            if (!solutions.Any(solution => solution.goalId == goal))
+            if (!solutions.Any(solution => solution.goalId == goal.id))
             {
-                LevelUtils.solutions.Remove((file, goal));
+                LevelUtils.solutions.Remove((LevelUtils.filePaths[id], goal.id));
             }
         }
     }
