@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 /*
