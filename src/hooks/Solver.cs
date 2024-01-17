@@ -34,6 +34,17 @@ internal class Solver_Solve
                 events.Add(e);
             }
         }
+        // Fix MagicMirror incorrectly using queen
+        if (addingQueen)
+        {
+            events.Add(new Event
+            {
+                frame = -1,
+                type = ET.TurnsInto,
+                source = ActorId.Queen,
+                target = ActorId.Frog
+            });
+        }
     } 
 }
 
