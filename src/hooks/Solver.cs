@@ -34,18 +34,7 @@ internal class Solver_Solve
                 events.Add(e);
             }
         }
-        // Fix MagicMirror incorrectly using queen
-        if (addingQueen)
-        {
-            events.Add(new Event
-            {
-                frame = -1,
-                type = ET.TurnsInto,
-                source = ActorId.Queen,
-                target = ActorId.Frog
-            });
-        }
-    } 
+    }
 }
 
 [HarmonyPatch(typeof(Solver), nameof(Solver.ToolboxChars))]
@@ -86,7 +75,6 @@ internal class Solver_Add
         if (Solver_Solve.addingQueen && source == ActorId.Queen)
         {
             story.events = events;
-            Solver_Solve.addingQueen = false;
             return false;
         }
         __result = new Event
@@ -100,5 +88,20 @@ internal class Solver_Add
         eventList.Insert(eventList.Count - Solver_Solve.events.Count, __result);
         story.events = eventList.ToArray();
         return false;
+    }
+}
+
+[HarmonyPatch(typeof(Solver), nameof(Solver.GetCutenessISee))]
+internal class Solver_GetCutenessISee
+{
+    static bool Prefix(ActorId other, ref float __result)
+    {
+        // Fix MagicMirror incorrectly using queen
+        if (other == ActorId.Queen && Solver_Solve.addingQueen)
+        {
+            __result = float.NegativeInfinity;
+            return false;
+        }
+        return true;
     }
 }
