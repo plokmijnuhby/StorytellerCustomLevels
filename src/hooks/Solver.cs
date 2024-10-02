@@ -16,11 +16,13 @@ namespace CustomLevels.hooks;
 [HarmonyPatch(typeof(Solver), nameof(Solver.Solve))]
 internal class Solver_Solve
 {
-    internal static bool addingQueen = false;
+    internal static bool addingQueen = true;
+    internal static bool addedQueen = false;
     internal static List<Event> events = [];
     static void Prefix()
     {
         addingQueen = true;
+        addedQueen = false;
     }
 
     internal static void FixEvents(Il2CppSystem.Collections.Generic.HashSet<ActorId> chars)
@@ -75,6 +77,8 @@ internal class Solver_Add
         if (Solver_Solve.addingQueen && source == ActorId.Queen)
         {
             story.events = events;
+            Solver_Solve.addingQueen = false;
+            Solver_Solve.addedQueen = true;
             return false;
         }
         __result = new Event
@@ -97,7 +101,7 @@ internal class Solver_GetCutenessISee
     static bool Prefix(ActorId other, ref float __result)
     {
         // Fix MagicMirror incorrectly using queen
-        if (other == ActorId.Queen && Solver_Solve.addingQueen)
+        if (other == ActorId.Queen && Solver_Solve.addedQueen)
         {
             __result = float.NegativeInfinity;
             return false;

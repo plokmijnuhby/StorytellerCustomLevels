@@ -145,7 +145,7 @@ internal class LevelUtils
         // but they don't work here because I'm overwriting a level, which is not supposed to happen.
         // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
 
-        Text.AddText(internalName, name, Array.Empty<string>());
+        Text.AddText(internalName, name, []);
         var description = new TextBlock()
         {
             key = internalName,
@@ -260,6 +260,7 @@ internal class LevelUtils
 
     public static void LoadLevel(LevelID id)
     {
+        events.Clear();
         if (!allowedIDs.Contains(id)) return;
 
         Campaign.Begin(id, 3);
@@ -271,7 +272,6 @@ internal class LevelUtils
 
         // The toolbox contains all the actors and settings.
         curlevel.toolbox.Clear();
-        events.Clear();
 
         try
         {
