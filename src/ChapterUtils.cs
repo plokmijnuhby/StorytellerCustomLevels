@@ -1,9 +1,11 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using static Il2CppSystem.Globalization.TimeSpanFormat;
 
 namespace CustomLevels;
 internal class ChapterUtils
@@ -24,6 +26,14 @@ internal class ChapterUtils
         LevelID.GothicSandbox,
         LevelID.DogSandbox
     ];
+    // Cache filenames with their full file paths. The functionality of this cache assumes that there are
+    // no dynamic file changes that occur while the game is running. So the cache will be cleared when the game is restarted.
+    // Key = currentChapterPath + path, Value = full file path.
+    private static Dictionary<(string dir, string pattern), string> filePaths = new Dictionary<(string, string), string>();
+    // Cache for folders and their levels. This is used to avoid reloading the same folder multiple times.
+    // The functionality of this cache assumes that the folders and levels do not change while the game is running.
+    // Key = folder path, Value = list of level file paths in that folder.
+    private static Dictionary<string, List<string>> foldersAndLevels = new Dictionary<string, List<string>>();
 
     public static bool IsInCustomLevel()
     {
@@ -33,12 +43,22 @@ internal class ChapterUtils
 
     static IEnumerable<string> GetLevels(string dir)
     {
-        return from file in Directory.EnumerateFiles(dir, "*.txt")
-               where Path.GetFileName(file) != "actors.txt"
-               where Path.GetFileName(file) != "events.txt"
-               select file;
+        if (foldersAndLevels.TryGetValue(dir, out List<string> levels))
+            return levels;
+
+        // this should only be called once per folder, so we can cache the results
+        IEnumerable<string> levelFilePaths = from file in Directory.EnumerateFiles(dir, "*.txt")
+                                      where Path.GetFileName(file) != "actors.txt"
+                                      where Path.GetFileName(file) != "events.txt"
+                                      select file;
+        foldersAndLevels[dir] = levelFilePaths.ToList();
+
+        // If the folder is empty, we still want to return an empty list,
+        return levelFilePaths;
     }
 
+    // The first call to this function will create the foldersAndLevels cache.
+    // So once it's created, we'll use the dictionary for subsequent calls.
     static IEnumerable<string> GetFolders()
     {
         if (!Directory.Exists("./custom_levels"))
@@ -49,6 +69,10 @@ internal class ChapterUtils
         }
         else
         {
+            // If the cache already exists, we can just return the keys
+            if (foldersAndLevels.Count > 0)
+                return foldersAndLevels.Keys;
+
             return Directory.EnumerateDirectories("./custom_levels")
                 .Where(dir => GetLevels(dir).Any());
         }
@@ -58,22 +82,54 @@ internal class ChapterUtils
     {
         if (currentChapterPath != null)
         {
+            // Check if we've already checked for the file before
+            var key = (currentChapterPath, path);
+            if (filePaths.TryGetValue(key, out string cachedFile))
+                return cachedFile;
+
             try
             {
-                string file = Directory.EnumerateFiles(currentChapterPath, path).FirstOrDefault((string)null);
-                if (file != null)
+                string file;
+                using (var enumerator = Directory.EnumerateFiles(currentChapterPath, path).GetEnumerator())
                 {
-                    return file;
+                    if (enumerator.MoveNext())
+                    {
+                        file = enumerator.Current;
+                        filePaths[key] = file;
+                        return file;
+                    }
+                    else
+                    {
+                        file = null;
+                    }
                 }
             }
             catch (IOException) { }
         }
+
         try
         {
-            string file = Directory.EnumerateFiles("./custom_levels", path).FirstOrDefault((string)null);
-            if (file != null)
+            // If we got here, we either didn't have a currentChapterPath or the file wasn't found in that path.
+            // Try to find the file in the custom_levels directory.
+            var key = ("./custom_levels", path);
+            if (filePaths.TryGetValue(key, out string cachedFile))
+                return cachedFile;
+
+            // Enumerate files in the custom_levels directory
+            string file;
+            using (var enumerator = Directory.EnumerateFiles("./custom_levels", path).GetEnumerator())
             {
-                return file;
+                if (enumerator.MoveNext())
+                {
+                    file = enumerator.Current;
+                    filePaths[key] = file;
+                }
+                else
+                {
+                    // No file was found so we store null in the cache
+                    file = null;
+                    filePaths[key] = null;
+                }
             }
         }
         catch (IOException) { }

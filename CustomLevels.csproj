@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -37,9 +37,8 @@
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Storyteller\BepInEx\interop\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
+    <Reference Include="GameAssembly">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Storyteller\GameAssembly.dll</HintPath>
+    </Reference>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy .\bin\Release\net6.0\CustomLevels.dll &quot;C:\Program Files (x86)\Steam\steamapps\common\Storyteller\BepInEx\plugins\CustomLevels.dll&quot;&#xD;&#xA;" />
-  </Target>
 </Project>

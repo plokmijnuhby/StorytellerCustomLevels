@@ -85,15 +85,20 @@ internal class ResourceLoader_GetAnimation
         {
             return true;
         }
-        string fullFilePath;
+
+        string fullFilePath = null;
         byte[] data;
         DateTime time;
         try
         {
-            fullFilePath = ChapterUtils.GetFile(id + ".png") ?? ChapterUtils.GetFile(id + "_*.png");
+            fullFilePath = ChapterUtils.GetFile(id + ".png");
             if (fullFilePath == null)
             {
-                return true;
+              fullFilePath = ChapterUtils.GetFile(id + "_*.png");
+            }
+            if (fullFilePath == null)
+            {
+              return true;
             }
             time = File.GetLastWriteTimeUtc(fullFilePath);
             if (cache.TryGetValue(id, out var cached))
