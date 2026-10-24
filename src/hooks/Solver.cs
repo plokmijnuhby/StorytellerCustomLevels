@@ -25,7 +25,7 @@ internal class Solver_Solve
         addedQueen = false;
     }
 
-    internal static void FixEvents(Il2CppSystem.Collections.Generic.HashSet<ActorId> chars)
+    internal static void FixEvents(Il2CppSystem.Collections.Generic.List<ActorId> chars)
     {
         events.Clear();
         foreach (Event e in LevelUtils.events)
@@ -42,7 +42,7 @@ internal class Solver_Solve
 [HarmonyPatch(typeof(Solver), nameof(Solver.ToolboxChars))]
 internal class Solver_ToolboxChars
 {
-    static void Postfix(Il2CppSystem.Collections.Generic.HashSet<ActorId> __result)
+    static void Postfix(Il2CppSystem.Collections.Generic.List<ActorId> __result)
     {
         // We shouldn't add queen if king is also there,
         // because this would also add events to do with them being married,
@@ -98,12 +98,12 @@ internal class Solver_Add
 [HarmonyPatch(typeof(Solver), nameof(Solver.GetCutenessISee))]
 internal class Solver_GetCutenessISee
 {
-    static bool Prefix(ActorId other, ref float __result)
+    static bool Prefix(ActorId other, ref int __result)
     {
         // Fix MagicMirror incorrectly using queen
         if (other == ActorId.Queen && Solver_Solve.addedQueen)
         {
-            __result = float.NegativeInfinity;
+            __result = int.MinValue;
             return false;
         }
         return true;

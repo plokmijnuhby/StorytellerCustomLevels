@@ -25,6 +25,7 @@ internal class Storyteller_GoToPage
     }
 }
 
+/* TODO: fix
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
 {
@@ -47,7 +48,7 @@ internal class Storyteller_ComputeSolvedRatioForSlot
         levels = null;
         __instance.LoadSlot(__instance.settings.currentSaveSlot, __instance.savegame);
     }
-}
+}*/
 
 
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
@@ -81,6 +82,7 @@ internal class Storyteller_UpdateSavegameCache
     }
 }
 
+/* TODO: fix
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GrantStamp))]
 internal class Storyteller_GrantStamp
 {
@@ -105,4 +107,4 @@ internal class Storyteller_VerifyClaimedSolutionsToLevel
             }
         }
     }
-}
+}*/

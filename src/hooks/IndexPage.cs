@@ -2,12 +2,12 @@
 
 namespace CustomLevels.hooks;
 
-[HarmonyPatch(typeof(IndexPage), nameof(IndexPage.Load))]
-internal class IndexPage_Load
+[HarmonyPatch(typeof(IndexChapterPanel), nameof(IndexChapterPanel.Load))]
+internal class IndexChapterPanel_Load
 {
-    static void Prefix(string chapterId)
+    static void Prefix(Chapter chapter, bool isLocked)
     {
-        if (chapterId == "custom_levels")
+        if (chapter.id == "custom_levels")
         {
             ChapterUtils.LoadIndexPage();
         }

@@ -5,18 +5,18 @@ using System;
 
 namespace CustomLevels.hooks;
 
-[HarmonyPatch(typeof(Savegame), nameof(Savegame.SetSolution))]
-internal class Savegame_SetSolution
+[HarmonyPatch(typeof(Savegame), nameof(Savegame.SetGoalConfig))]
+internal class Savegame_SetGoalConfig
 {
-    static bool Prefix(LevelID levelID, string goalid, StoryConfig config)
+    static bool Prefix(LevelID levelID, string goalid, StoryLayout layout)
     {
         if (!ChapterUtils.allowedIDs.Contains(levelID))
         {
             return true;
         }
-        StoryConfig newConfig = new();
-        newConfig.CopyFrom(config);
-        LevelUtils.solutions[(LevelUtils.filePaths[levelID], goalid)] = newConfig;
+        StoryLayout newLayout = new();
+        newLayout.CopyFrom(layout);
+        LevelUtils.solutions[(LevelUtils.filePaths[levelID], goalid)] = newLayout;
         return false;
     }
 }
@@ -24,7 +24,7 @@ internal class Savegame_SetSolution
 [HarmonyPatch(typeof(Savegame), nameof(Savegame.GetGoalConfig))]
 internal class Savegame_GetGoalConfig
 {
-    static bool Prefix(LevelID levelID, string goalid, ref StoryConfig __result)
+    static bool Prefix(LevelID levelID, string goalid, ref StoryLayout __result)
     {
         if (!ChapterUtils.allowedIDs.Contains(levelID))
         {
@@ -61,7 +61,7 @@ internal class Savegame_SaveToData
             // If a level was totally deleted, it's best to remove it.
             if (File.Exists(file))
             {
-                __result += $"custom:{file}:{goal}:{config.ToText()}\n";
+                __result += $"custom:{file}:{goal}:{StoryLayoutSerializer.ToText(config)}\n";
             }
             else
             {
@@ -76,14 +76,14 @@ internal class Savegame_LoadFromLines
 {
     static void Postfix(string[] lines)
     {
-        foreach(var line in lines.Reverse())
+        foreach(var line in Enumerable.Reverse(lines))
         {
             string[] sections = line.Split(':');
             if (sections[0] != "custom")
             {
                 break;
             }
-            LevelUtils.solutions[(sections[1], sections[2])] = StoryConfig.FromText(sections[3]);
+            LevelUtils.solutions[(sections[1], sections[2])] = StoryLayoutSerializer.FromText(sections[3]);
         }
     }
 }

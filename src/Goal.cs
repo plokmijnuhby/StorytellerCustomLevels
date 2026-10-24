@@ -35,7 +35,7 @@ internal class Goal
             {
                 for (int i = start; i < spec.frames; i++)
                 {
-                    if (Solver.HasEvent(story, i, eventType, source, target))
+                    if (Solver.Has(story, i, eventType, source, target))
                     {
                         return i;
                     }
@@ -46,7 +46,7 @@ internal class Goal
             {
                 for (int i = 0; i < spec.frames; i++)
                 {
-                    if (Solver.HasEvent(story, i, eventType, source, target))
+                    if (Solver.Has(story, i, eventType, source, target))
                     {
                         return -1;
                     }

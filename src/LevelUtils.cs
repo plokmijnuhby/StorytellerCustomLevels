@@ -18,7 +18,7 @@ internal class LevelUtils
         LevelID.VampireSandbox,
         LevelID.MansionSandbox,
         LevelID.GothicSandbox,
-        LevelID.DogSandbox
+        LevelID.MonsterSandbox
     ];
     static int currentSubgoals = 0;
     static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = [];
@@ -27,7 +27,7 @@ internal class LevelUtils
     public static readonly Dictionary<LevelID, bool> verbose = [];
     public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = [];
     public static readonly Dictionary<LevelID, string> filePaths = [];
-    public static readonly Dictionary<(string, string), StoryConfig> solutions = [];
+    public static readonly Dictionary<(string, string), StoryLayout> solutions = [];
     public static List<Event> events = [];
 
     static T GetEnum<T>(string name) where T : struct
@@ -180,10 +180,6 @@ internal class LevelUtils
             throw new InvalidOperationException("Frames must be greater than 0");
         }
         curlevel.frames = frames;
-
-        // The settings that are in place at the start of the level.
-        // Used for some tutorials, but here we can just leave them as the default Setting.Empty.
-        curlevel.startingSettings = new Setting[frames];
     }
     static void SetWitchStartsHot()
     {
@@ -263,7 +259,7 @@ internal class LevelUtils
         events.Clear();
         if (!allowedIDs.Contains(id)) return;
 
-        Campaign.Begin(id, 3);
+        Campaign.Begin(id, LevelType.Playground, 3);
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
         goalInfos[id] = [];
@@ -335,23 +331,22 @@ internal class LevelUtils
         newSolutions.Clear();
         foreach (var solution in oldSolutions)
         {
-            if (solution.levelID != id)
+            if (solution.levelId != id)
             {
                 newSolutions.Add(solution);
             }
         }
-        foreach (var ((file, goal), config) in solutions)
+        foreach (var ((file, goal), layout) in solutions)
         {
             if (file == filePaths[id])
             {
                 newSolutions.Add(new GoalSolution
                 {
                     goalId = goal,
-                    levelID = id,
-                    config = config
+                    levelId = id,
+                    layout = layout
                 });
             }
         }
-        game.VerifyClaimedSolutionsToLevel(id);
     }
 }

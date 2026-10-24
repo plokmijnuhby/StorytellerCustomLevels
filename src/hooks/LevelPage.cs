@@ -13,6 +13,7 @@ internal class LevelPage_LoadLevel
     }
 }
 
+/* TODO: Check if this is still necessary, and fix it or delete it. It currently doesn't compile.
 [HarmonyPatch(typeof(LevelPage), nameof(LevelPage.ComputeLayout))]
 internal class LevelPage_ComputeLayout
 {
@@ -154,3 +155,4 @@ internal class LevelPage_ComputeLayout
         return false;
     }
 }
+*/

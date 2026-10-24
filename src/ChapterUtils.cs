@@ -22,7 +22,7 @@ internal class ChapterUtils
         LevelID.VampireSandbox,
         LevelID.MansionSandbox,
         LevelID.GothicSandbox,
-        LevelID.DogSandbox
+        LevelID.DragonSandbox
     ];
 
     public static bool IsInCustomLevel()
@@ -167,7 +167,7 @@ internal class ChapterUtils
             LevelUtils.filePaths[id] = file;
             LevelUtils.LoadLevel(id);
         }
-        Storyteller.game.UpdateSavegameCache();
+        //Storyteller.game.UpdateSavegameCache();
     }
 
     public static void LoadIndexPage()
@@ -242,7 +242,7 @@ internal class ChapterUtils
             values = Array.Empty<Il2CppSystem.Object>()
         };
 
-        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_custom");
+        Campaign.BeginChapter("custom_levels", "Custom levels", "illustration_custom", "index_custom", "Custom chapter");
         customChapter = Campaign.curChapter;
         customChapter.subchapterTitle = subchapterTitle;
         Campaign.EndChapter();
