@@ -9,10 +9,24 @@ internal class Storyteller_LoadBookPages
     // This function is only ever called once, when the game first loads.
     static void Postfix()
     {
-        ChapterUtils.InitGame();
+        var pages = Storyteller.game.pages;
+        int i = 0;
+        while (i < pages.Count)
+        {
+            if (pages[i].type == PageType.Devil || pages[i].type == PageType.Empty)
+            {
+                pages.RemoveAt(i);
+            }
+            else
+            {
+                i++;
+            }
+        }
+        Storyteller.game.savegame.indexUnlocked = true;
     }
 }
 
+/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
 internal class Storyteller_GoToPage
 {
@@ -23,7 +37,7 @@ internal class Storyteller_GoToPage
             ChapterUtils.GoToPage(ref pageIndex);
         }
     }
-}
+}*/
 
 /* TODO: fix
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
@@ -50,7 +64,7 @@ internal class Storyteller_ComputeSolvedRatioForSlot
     }
 }*/
 
-
+/*
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.UpdateSavegameCache))]
 internal class Storyteller_UpdateSavegameCache
 {
@@ -80,7 +94,7 @@ internal class Storyteller_UpdateSavegameCache
             }
         }
     }
-}
+}*/
 
 /* TODO: fix
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GrantStamp))]
