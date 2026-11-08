@@ -59,23 +59,40 @@ internal class Campaign_LoadCampaign
         Campaign.stamps.Clear();
         Campaign.goalDescriptions.Clear();
 
-        int currentId = 1;
+        int levelId = 1;
 
         Directory.CreateDirectory("./custom_levels");
-        var files = Directory.EnumerateFiles("./custom_levels", "*.txt").ToArray();
-        files.Sort(Compare);
-
-        Campaign.BeginChapter("test_chapter", "Test Chapter", "illustration_marco", "CHAPTER_LOCKED", "Test");
-        foreach (string file in files)
+        var chapters = Directory.GetDirectories("./custom_levels");
+        chapters.Sort(Compare);
+        if (chapters.Length == 0)
         {
-            LevelUtils.filePaths.Add(file);
-            LevelUtils.goalInfos.Add([]);
-            LevelUtils.musicSources.Add(default);
-            LevelUtils.LoadLevel((LevelID)currentId, file);
-            string name = SplitWhitespace(file, true).Last();
-            Campaign.AddLevel(name.Replace('_', ' '), (LevelID)currentId++);
+            chapters = ["./custom_levels"];
         }
-        Campaign.EndChapter();
+        for (int chapterId = 0; chapterId < chapters.Length; chapterId++)
+        {
+            var chapter = chapters[chapterId];
+            var files = Directory.GetFiles(chapter, "*.txt");
+            files.Sort(Compare);
+
+            var chapter_name = SplitWhitespace(chapter).Last();
+            Campaign.BeginChapter(
+                $"chapter_{chapterId}",
+                chapter_name,
+                "illustration_marco",
+                "CHAPTER_LOCKED",
+                chapter_name
+            );
+            foreach (string file in files)
+            {
+                LevelUtils.filePaths.Add(file);
+                LevelUtils.goalInfos.Add([]);
+                LevelUtils.musicSources.Add(default);
+                LevelUtils.LoadLevel((LevelID)levelId, file);
+                string name = SplitWhitespace(file, true).Last();
+                Campaign.AddLevel(name.Replace('_', ' '), (LevelID)levelId++);
+            }
+            Campaign.EndChapter();
+        }
 
         /*
         var newSolutions = Storyteller.game.savegame.solutions;
