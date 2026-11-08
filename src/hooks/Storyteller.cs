@@ -26,19 +26,6 @@ internal class Storyteller_LoadBookPages
     }
 }
 
-/*
-[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
-internal class Storyteller_GoToPage
-{
-    static void Prefix(ref int pageIndex, bool skipAnims)
-    {
-        if (!skipAnims)
-        {
-            ChapterUtils.GoToPage(ref pageIndex);
-        }
-    }
-}*/
-
 /* TODO: fix
 [HarmonyPatch(typeof(Storyteller), nameof(Storyteller.ComputeSolvedRatioForSlot))]
 internal class Storyteller_ComputeSolvedRatioForSlot
@@ -91,33 +78,6 @@ internal class Storyteller_UpdateSavegameCache
             if (levelSolved)
             {
                 savegameCache.solvedCrownLevels -= 1;
-            }
-        }
-    }
-}*/
-
-/* TODO: fix
-[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GrantStamp))]
-internal class Storyteller_GrantStamp
-{
-    // It should not be possible to obtain stamps in a custom level.
-    static bool Prefix(LevelID levelId)
-    {
-        return !ChapterUtils.allowedIDs.Contains(levelId);
-    }
-}
-
-[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.VerifyClaimedSolutionsToLevel))]
-internal class Storyteller_VerifyClaimedSolutionsToLevel
-{
-    static void Postfix(Storyteller __instance, LevelID id)
-    {
-        GoalSolution[] solutions = __instance.savegame.solutions.ToArray();
-        foreach (GoalSpec goal in Campaign.levelSpecs[id].goals)
-        {
-            if (!solutions.Any(solution => solution.goalId == goal.id))
-            {
-                LevelUtils.solutions.Remove((LevelUtils.filePaths[id], goal.id));
             }
         }
     }

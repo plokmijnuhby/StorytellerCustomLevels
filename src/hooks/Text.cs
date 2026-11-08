@@ -3,15 +3,12 @@ using System.IO;
 
 namespace CustomLevels.hooks;
 
+/*
 [HarmonyPatch(typeof(Text), nameof(Text.GetActorLabel))]
 internal class Text_GetActorLabel
 {
     static bool Prefix(ActorId id, ref string __result)
     {
-        if (!ChapterUtils.IsInCustomLevel())
-        {
-            return true;
-        }
         string file = ChapterUtils.GetFile("actors.txt");
         if (file == null)
         {
@@ -29,3 +26,4 @@ internal class Text_GetActorLabel
         return true;
     }
 }
+*/

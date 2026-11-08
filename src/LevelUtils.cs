@@ -8,28 +8,12 @@ namespace CustomLevels;
 
 internal class LevelUtils
 {
-    static readonly LevelID[] allowedIDs =
-    [
-        // Unused levels, can be overwritten relatively safely.
-        // We can only have 7 or we'll run out of space to display them.
-        LevelID.GenesisSandbox,
-        LevelID.DwarfSandbox,
-        LevelID.CrownSandbox,
-        LevelID.VampireSandbox,
-        LevelID.MansionSandbox,
-        LevelID.GothicSandbox,
-        LevelID.MonsterSandbox
-    ];
     static int currentSubgoals = 0;
-    static readonly Dictionary<LevelID, (LevelID, bool)> musicSources = [];
+    public static List<(LevelID, bool)> musicSources = [default];
 
-    public static LevelSpec curlevel;
-    public static readonly Dictionary<LevelID, bool> verbose = [];
-    public static readonly Dictionary<LevelID, Dictionary<string, Goal>> goalInfos = [];
-    public static readonly Dictionary<LevelID, string> filePaths = [];
-    public static readonly Dictionary<(string, string), StoryLayout> solutions = [];
-    public static List<Event> events = [];
-
+    static LevelSpec curlevel;
+    public static List<Dictionary<string, Goal>> goalInfos = [null];
+    public static readonly List<string> filePaths = [null];
     static T GetEnum<T>(string name) where T : struct
     {
         if (Enum.TryParse(name, true, out T result))
@@ -48,17 +32,14 @@ internal class LevelUtils
             bool isLevel = Enum.TryParse(id["music_".Length..], true, out LevelID levelID);
             if (isLevel)
             {
-                LoadLevel(levelID);
-                if (musicSources.TryGetValue(levelID, out (LevelID, bool) value))
+                var (newLevelID, isDevil) = musicSources[(int)levelID];
+                if (newLevelID == LevelID.Invalid) { return null; }
+                string result = "music_" + newLevelID.ToString().ToLowerInvariant();
+                if (isDevil)
                 {
-                    var (newLevelID, isDevil) = value;
-                    string result = "music_" + newLevelID.ToString().ToLowerInvariant();
-                    if (isDevil)
-                    {
-                        result += "_devil";
-                    }
-                    return result;
+                    result += "_devil";
                 }
+                return result;
             }
         }
         return id;
@@ -132,35 +113,25 @@ internal class LevelUtils
     {
         if (goalType == GoalType.Subgoal)
         {
-            if (currentSubgoals == 3)
+            if (currentSubgoals++ == 3)
             {
                 throw new InvalidOperationException("Can't fit more than three subgoals on screen");
             }
-            currentSubgoals++;
         }
 
         string internalName = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
+        var goalSpec = Campaign.AddGoal(internalName, name, goalType);
 
-        // The default version of Campaign.LoadCampaign uses functions that do what I'm about to do in a much simpler way,
-        // but they don't work here because I'm overwriting a level, which is not supposed to happen.
         // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
-
         Text.AddText(internalName, name, []);
-        var description = new TextBlock()
+        goalSpec.description = new TextBlock
         {
             key = internalName,
             values = Array.Empty<Il2CppSystem.Object>()
         };
-        var goalSpec = new GoalSpec()
-        {
-            id = internalName,
-            description = description,
-            type = goalType
-        };
-        curlevel.goals.Add(goalSpec);
 
         var goal = new Goal(CustomGoalType.All);
-        goalInfos[curlevel.id][internalName] = goal;
+        goalInfos[(int)curlevel.id][internalName] = goal;
         return goal;
     }
     static int AddGoal(string[] lines, int start, GoalType goalType)
@@ -211,10 +182,7 @@ internal class LevelUtils
                 SetWitchStartsHot();
                 return start;
             case "Music":
-                musicSources[curlevel.id] = (GetEnum<LevelID>(line[1]), line.Length > 2 && line[2] == "Devil");
-                return start;
-            case "Verbose":
-                verbose[curlevel.id] = true;
+                musicSources[(int)curlevel.id] = (GetEnum<LevelID>(line[1]), line.Length > 2 && line[2] == "Devil");
                 return start;
             default:
                 throw new InvalidOperationException("Unknown command: " + line[0]);
@@ -229,6 +197,7 @@ internal class LevelUtils
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {
+        /*
         if (verbose[spec.id])
         {
             var logger = Plugin.logger;
@@ -238,7 +207,8 @@ internal class LevelUtils
                 logger.LogMessage($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
             }
         }
-        foreach (var (goalId, goal) in goalInfos[spec.id])
+        */
+        foreach (var (goalId, goal) in goalInfos[(int)spec.id])
         {
             if (goal.CheckGoal(spec, story, 0) != -1)
             {
@@ -246,32 +216,18 @@ internal class LevelUtils
             }
         }
     }
-    public static void ClearLevelData()
+    public static void LoadLevel(LevelID id, string file)
     {
-        filePaths.Clear();
-        goalInfos.Clear();
-        musicSources.Clear();
-        verbose.Clear();
-    }
-
-    public static void LoadLevel(LevelID id)
-    {
-        events.Clear();
-        if (!allowedIDs.Contains(id)) return;
-
-        Campaign.Begin(id, LevelType.Playground, 3);
+        int curId = (int)id;
+        Campaign.Begin(id, LevelType.Regular, 3);
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
-        goalInfos[id] = [];
-        verbose[id] = false;
-        musicSources[id] = default;
-
-        // The toolbox contains all the actors and settings.
-        curlevel.toolbox.Clear();
+        goalInfos[curId].Clear();
+        musicSources[curId] = default;
 
         try
         {
-            var lines = File.ReadAllLines(filePaths[id]);
+            var lines = File.ReadAllLines(file);
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
@@ -280,7 +236,7 @@ internal class LevelUtils
                     i = Process(lines, i);
                 }
             }
-            string events = ChapterUtils.GetFile("events.txt");
+            /*string events = ChapterUtils.GetFile("events.txt");
             if (events != null)
             {
                 foreach (string line in File.ReadLines(events))
@@ -305,7 +261,7 @@ internal class LevelUtils
                     }
                     LevelUtils.events.Add(e);
                 }
-            }
+            }*/
         }
         catch (InvalidOperationException ex)
         {
@@ -321,32 +277,6 @@ internal class LevelUtils
         }
 
         Campaign.SetEval(DelegateSupport.ConvertDelegate<GoalsEvaluator>(EvalGoal));
-
         Campaign.End();
-        Campaign.goalDescriptions.Clear();
-
-        var game = Storyteller.game;
-        var newSolutions = game.savegame.solutions;
-        var oldSolutions = newSolutions.ToArray();
-        newSolutions.Clear();
-        foreach (var solution in oldSolutions)
-        {
-            if (solution.levelId != id)
-            {
-                newSolutions.Add(solution);
-            }
-        }
-        foreach (var ((file, goal), layout) in solutions)
-        {
-            if (file == filePaths[id])
-            {
-                newSolutions.Add(new GoalSolution
-                {
-                    goalId = goal,
-                    levelId = id,
-                    layout = layout
-                });
-            }
-        }
     }
 }

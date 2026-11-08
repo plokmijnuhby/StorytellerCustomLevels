@@ -9,7 +9,7 @@ internal class LevelPage_LoadLevel
 {
     static void Prefix(LevelID id)
     {
-        LevelUtils.LoadLevel(id);
+        LevelUtils.LoadLevel(id, LevelUtils.filePaths[(int)id]);
     }
 }
 

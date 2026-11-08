@@ -4,7 +4,7 @@ using System.IO;
 using System;
 
 namespace CustomLevels.hooks;
-
+/*
 [HarmonyPatch(typeof(Savegame), nameof(Savegame.SetGoalConfig))]
 internal class Savegame_SetGoalConfig
 {
@@ -96,3 +96,4 @@ internal class Savegame_Reset
         LevelUtils.solutions.Clear();
     }
 }
+*/

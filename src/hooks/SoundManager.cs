@@ -1,20 +1,22 @@
 ﻿using HarmonyLib;
 
 namespace CustomLevels.hooks;
-
 [HarmonyPatch(typeof(SoundManager), nameof(SoundManager.HasClipsFor))]
 internal class SoundManager_HasClipsFor
 {
-    static void Prefix(ref string id)
+    static bool Prefix(ref string id, ref bool __result)
     {
         id = LevelUtils.FixMusic(id);
+        __result = id != null;
+        return __result;
     }
 }
-[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PlayMusicById))]
-internal class SoundManager_PlayMusicById
+[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PickClip))]
+internal class SoundManager_PickClip
 {
-    static void Prefix(ref string id)
+    static bool Prefix(ref string id)
     {
         id = LevelUtils.FixMusic(id);
+        return id != null;
     }
 }

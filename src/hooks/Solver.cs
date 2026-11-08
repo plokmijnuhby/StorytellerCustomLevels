@@ -10,7 +10,7 @@ using System.Collections.Generic;
  * so we need to force Solver to add an event earlier.
  * This can be done by forcing a monarch to appear in the toolbox chars, adding an event giving them a crown.
  */
-
+/*
 namespace CustomLevels.hooks;
 
 [HarmonyPatch(typeof(Solver), nameof(Solver.Solve))]
@@ -109,3 +109,4 @@ internal class Solver_GetCutenessISee
         return true;
     }
 }
+*/

@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 
 namespace CustomLevels.hooks;
-
+/*
 [HarmonyPatch(typeof(ResourceLoader), nameof(ResourceLoader.GetSprite))]
 internal class ResourceLoader_GetSprite
 {
@@ -18,7 +18,7 @@ internal class ResourceLoader_GetSprite
         }
 
         byte[] data;
-        string folder = ChapterUtils.currentChapterPath ?? "./custom_levels";
+        string folder = "./custom_levels";
         try
         {
             data = File.ReadAllBytes(folder + "/illustration.png");
@@ -44,10 +44,6 @@ internal class ResourceLoader_HasAnimation
 {
     static void Postfix(string id, ref bool __result)
     {
-        if (!ChapterUtils.IsInCustomLevel())
-        {
-            return;
-        }
         try
         {
             __result = __result
@@ -68,8 +64,9 @@ internal class ResourceLoader_HasAnimation
         }
     }
 }
+*/
 
-
+/*
 [HarmonyPatch(typeof(ResourceLoader), nameof(ResourceLoader.GetAnimation))]
 internal class ResourceLoader_GetAnimation
 {
@@ -81,10 +78,6 @@ internal class ResourceLoader_GetAnimation
 
     static bool Prefix(string id, ref Il2CppReferenceArray<FrameSpec> __result)
     {
-        if (!ChapterUtils.IsInCustomLevel())
-        {
-            return true;
-        }
         string fullFilePath;
         byte[] data;
         DateTime time;
@@ -141,3 +134,4 @@ internal class ResourceLoader_GetAnimation
         return false;
     }
 }
+*/
