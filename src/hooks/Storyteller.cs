@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace CustomLevels.hooks;
 
-[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.LoadBookPages))]
-internal class Storyteller_LoadBookPages
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.Awake))]
+internal class Storyteller_Awake
 {
     // This function is only ever called once, when the game first loads.
     static void Postfix()
     {
-        var pages = Storyteller.game.pages;
-        int i = 0;
-        while (i < pages.Count)
+        var game = Storyteller.game;
+        var pages = game.pages;
+        for (int i = 0; i < pages.Count;)
         {
             if (pages[i].type == PageType.Devil || pages[i].type == PageType.Empty)
             {
@@ -22,7 +22,10 @@ internal class Storyteller_LoadBookPages
                 i++;
             }
         }
-        Storyteller.game.savegame.indexUnlocked = true;
+        // Prevent displaying certain tutorial text
+        game.savegame.seenStamps = true;
+        // Prevent a check which crashes if there are too few levels in the game
+        game.savegame.indexUnlocked = true;
     }
 }
 
