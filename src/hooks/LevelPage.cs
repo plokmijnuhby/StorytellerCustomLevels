@@ -24,7 +24,10 @@ internal class LevelPage_SimulateStory
 
     static void Prefix(LevelPage __instance)
     {
-        var chapter = new Chapter();
+        var chapter = new Chapter()
+        {
+            id = "dummy"
+        };
         chapter.levels.Add(new ChapterLevelEntry());
         chapter.levels.Add(new ChapterLevelEntry());
         Campaign.chapters.Insert(0, chapter);
