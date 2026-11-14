@@ -299,5 +299,26 @@ internal class LevelUtils
 
         Campaign.SetEval(DelegateSupport.ConvertDelegate<GoalsEvaluator>(EvalGoal));
         Campaign.End();
+
+        // Verify whether old solutions still work, if not then erase them
+        var solutions = Storyteller.game.savegame.solutions;
+        for (var i = 0; i < solutions.Count; i++)
+        {
+            var goal = solutions[i];
+            // "current" is the state of the puzzle when the player last saw it,
+            // not really a solution as such
+            if (goal.levelId == id && goal.goalId != "current")
+            {
+                var story = Solver.Solve(goal.layout, curlevel.toolbox);
+                var evalResult = new EvaluatorResult();
+                EvalGoal(curlevel, story, evalResult);
+                if (!evalResult.goals.Contains(goal.goalId))
+                {
+                    Plugin.logger.LogInfo(goal.goalId);
+                    solutions.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
     }
 }
