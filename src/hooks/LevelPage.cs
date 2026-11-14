@@ -13,6 +13,28 @@ internal class LevelPage_LoadLevel
     }
 }
 
+[HarmonyPatch(typeof(LevelPage), nameof(LevelPage.SimulateStory))]
+internal class LevelPage_SimulateStory
+{
+    // This function, among other things, checks if the level is
+    // one of the first two levels in the first chapter, and if so
+    // does... something involving a cutscene I don't fully understand.
+    // Anyway, the important thing is, if the first chapter has less than two
+    // levels, this check crashes. The simplest fix is to just add a new chapter.
+
+    static void Prefix(LevelPage __instance)
+    {
+        var chapter = new Chapter();
+        chapter.levels.Add(new ChapterLevelEntry());
+        chapter.levels.Add(new ChapterLevelEntry());
+        Campaign.chapters.Insert(0, chapter);
+    }
+    static void Finalizer()
+    {
+        Campaign.chapters.RemoveAt(0);
+    }
+}
+
 /* TODO: Check if this is still necessary, and fix it or delete it. It currently doesn't compile.
 [HarmonyPatch(typeof(LevelPage), nameof(LevelPage.ComputeLayout))]
 internal class LevelPage_ComputeLayout

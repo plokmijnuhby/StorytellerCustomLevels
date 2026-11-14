@@ -59,6 +59,10 @@ internal class Campaign_LoadCampaign
         Campaign.stamps.Clear();
         Campaign.goalDescriptions.Clear();
 
+        // Dummy level, used as a placeholder by other hooks
+        Campaign.Begin(LevelID.Invalid, LevelType.Playground, 3);
+        Campaign.End();
+
         int levelId = 1;
 
         Directory.CreateDirectory("./custom_levels");
