@@ -109,7 +109,7 @@ internal class LevelUtils
         }
         return lines.Length - 1;
     }
-    static Goal AddGoal(string name, GoalType goalType)
+    static Goal AddGoal(string name, GoalType goalType, bool isDevil)
     {
         if (goalType == GoalType.Subgoal)
         {
@@ -121,6 +121,7 @@ internal class LevelUtils
 
         string internalName = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
         var goalSpec = Campaign.AddGoal(internalName, name, goalType);
+        goalSpec.isDevil = isDevil;
 
         // I honestly don't know what the arrays in this function do, but leaving them empty seems fine.
         Text.AddText(internalName, name, []);
@@ -134,11 +135,11 @@ internal class LevelUtils
         goalInfos[(int)curlevel.id][internalName] = goal;
         return goal;
     }
-    static int AddGoal(string[] lines, int start, GoalType goalType)
+    static int AddGoal(string[] lines, int start, GoalType goalType, bool isDevil = false)
     {
         // Ignore the word "Goal" or "Subgoal" at the start of the line
         string name = string.Join(' ', lines[start].Split().Skip(1));
-        return ProcessGoal(lines, start + 1, "", AddGoal(name, goalType));
+        return ProcessGoal(lines, start + 1, "", AddGoal(name, goalType, isDevil));
     }
     static void SetFrames(string frameString)
     {
@@ -172,6 +173,8 @@ internal class LevelUtils
                 return AddGoal(lines, start, GoalType.Main);
             case "Subgoal":
                 return AddGoal(lines, start, GoalType.Subgoal);
+            case "DevilGoal":
+                return AddGoal(lines, start, GoalType.Subgoal, true);
             case "Actor":
                 Campaign.AddActor(GetEnum<ActorId>(line[1]));
                 return start;
@@ -193,7 +196,7 @@ internal class LevelUtils
         SetFrames("3");
         curlevel.toolbox.Clear();
         curlevel.goals.Clear();
-        AddGoal("ERROR: " + message, GoalType.Main);
+        AddGoal("ERROR: " + message, GoalType.Main, false);
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {

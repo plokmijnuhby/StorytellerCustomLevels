@@ -9,16 +9,19 @@ internal class Storyteller_Awake
     static void Postfix()
     {
         var game = Storyteller.game;
-        var pages = game.pages;
-        for (int i = 0; i < pages.Count;)
+        if (game.savegameCache.totalDevilLevels == 0)
         {
-            if (pages[i].type == PageType.Devil || pages[i].type == PageType.Empty)
+            var pages = game.pages;
+            for (int i = 0; i < pages.Count;)
             {
-                pages.RemoveAt(i);
-            }
-            else
-            {
-                i++;
+                if (pages[i].type == PageType.Devil || pages[i].type == PageType.Empty)
+                {
+                    pages.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
             }
         }
         // Prevent displaying certain tutorial text
