@@ -314,7 +314,6 @@ internal class LevelUtils
                 EvalGoal(curlevel, story, evalResult);
                 if (!evalResult.goals.Contains(goal.goalId))
                 {
-                    Plugin.logger.LogInfo(goal.goalId);
                     solutions.RemoveAt(i);
                     i--;
                 }
