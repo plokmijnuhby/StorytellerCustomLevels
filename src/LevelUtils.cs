@@ -8,6 +8,8 @@ namespace CustomLevels;
 
 internal class LevelUtils
 {
+    static bool logEvents = false;
+
     static int currentSubgoals = 0;
     public static List<(LevelID, bool)> musicSources = [default];
 
@@ -200,8 +202,7 @@ internal class LevelUtils
     }
     static void EvalGoal(LevelSpec spec, Story story, EvaluatorResult result)
     {
-        /*
-        if (verbose[spec.id])
+        if (logEvents)
         {
             var logger = Plugin.logger;
             logger.LogMessage("Logging events:");
@@ -210,7 +211,7 @@ internal class LevelUtils
                 logger.LogMessage($"{storyEvent.type} {storyEvent.source} {storyEvent.target} (frame {storyEvent.frame})");
             }
         }
-        */
+
         foreach (var (goalId, goal) in goalInfos[(int)spec.id])
         {
             if (goal.CheckGoal(spec, story, 0) != -1)
@@ -221,6 +222,23 @@ internal class LevelUtils
     }
     public static void LoadLevel(LevelID id, string file)
     {
+        logEvents = false;
+        try
+        {
+            foreach(var line in File.ReadLines("./custom_levels/config.txt"))
+            {
+                switch (line.TrimEnd())
+                {
+                    case "LogEvents":
+                        logEvents = true;
+                        break;
+                    default:
+                        Plugin.logger.LogError($"Unknown config {line.TrimEnd()}");
+                        break;
+                }
+            }
+        }
+        catch (IOException) { }
         int curId = (int)id;
         Campaign.Begin(id, LevelType.Regular, 3);
         curlevel = Campaign.curlevel;
