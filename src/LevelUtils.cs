@@ -11,6 +11,7 @@ internal class LevelUtils
     static bool logEvents = false;
 
     static int currentSubgoals = 0;
+    static int currentDevilGoals = 0;
     public static List<(LevelID, bool)> musicSources = [default];
 
     static LevelSpec curlevel;
@@ -113,12 +114,13 @@ internal class LevelUtils
     }
     static Goal AddGoal(string name, GoalType goalType, bool isDevil)
     {
-        if (goalType == GoalType.Subgoal)
+        if (goalType == GoalType.Subgoal && isDevil && currentDevilGoals++ == 3)
         {
-            if (currentSubgoals++ == 3)
-            {
-                throw new InvalidOperationException("Can't fit more than three subgoals on screen");
-            }
+            throw new InvalidOperationException("Can't fit more than three devil goals on screen");
+        }
+        else if (goalType == GoalType.Subgoal && !isDevil && currentSubgoals++ == 3)
+        {
+            throw new InvalidOperationException("Can't fit more than three subgoals on screen");
         }
 
         string internalName = $"custom_goal_{curlevel.id}_{curlevel.goals.Count}";
@@ -243,6 +245,7 @@ internal class LevelUtils
         Campaign.Begin(id, LevelType.Regular, 3);
         curlevel = Campaign.curlevel;
         currentSubgoals = 0;
+        currentDevilGoals = 0;
         goalInfos[curId].Clear();
         musicSources[curId] = default;
 
