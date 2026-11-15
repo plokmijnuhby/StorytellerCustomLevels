@@ -63,8 +63,6 @@ internal class Campaign_LoadCampaign
         Campaign.Begin(LevelID.Invalid, LevelType.Playground, 3);
         Campaign.End();
 
-        int levelId = 1;
-
         Directory.CreateDirectory("./custom_levels");
         var chapters = Directory.GetDirectories("./custom_levels");
         chapters.Sort(Compare);
@@ -94,6 +92,7 @@ internal class Campaign_LoadCampaign
                 "CHAPTER_LOCKED",
                 chapter_name
             );
+            int levelId = chapterId * 9 + 1;
             foreach (string file in files)
             {
                 LevelUtils.filePaths.Add(file);
