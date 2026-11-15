@@ -72,6 +72,10 @@ internal class Campaign_LoadCampaign
         {
             chapters = ["./custom_levels"];
         }
+        else if (chapters.Length > 21)
+        {
+            chapters = chapters[0..21];
+        }
         for (int chapterId = 0; chapterId < chapters.Length; chapterId++)
         {
             var chapter = chapters[chapterId];
