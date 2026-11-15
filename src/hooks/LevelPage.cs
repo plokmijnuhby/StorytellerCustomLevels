@@ -38,13 +38,12 @@ internal class LevelPage_SimulateStory
     }
 }
 
-/* TODO: Check if this is still necessary, and fix it or delete it. It currently doesn't compile.
 [HarmonyPatch(typeof(LevelPage), nameof(LevelPage.ComputeLayout))]
 internal class LevelPage_ComputeLayout
 {
-    static bool Prefix(LevelPage __instance, LevelSpec spec, ref LevelLayout __result)
+    static bool Prefix(LevelPage __instance, LevelSpec spec, ref LevelUILayout __result)
     {
-        __result = new LevelLayout();
+        __result = new LevelUILayout();
         int frames = spec.frames;
         string settingIdSuffix;
         Transform mainAnchorSubgoals;
@@ -56,6 +55,7 @@ internal class LevelPage_ComputeLayout
             rows++;
             inSquare = true;
         }
+        int cols = (frames - 1) / rows + 1;
         switch (frames)
         {
             case < 4:
@@ -66,6 +66,7 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor3;
                 __result.framesAnchor = __instance.framesAnchor3;
                 __result.toolboxAnchor = __instance.toolsAnchor3;
+                __result.framesContainerScale = 1.0f;
                 rows = 1;
                 break;
             case 7:
@@ -77,6 +78,7 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor8;
                 __result.toolboxAnchor = __instance.toolsAnchor8;
+                __result.framesContainerScale = 0.78f;
                 break;
             case int _ when inSquare:
                 settingIdSuffix = "wide6";
@@ -86,6 +88,7 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor4;
                 __result.framesAnchor = __instance.framesAnchor4;
                 __result.toolboxAnchor = __instance.toolsAnchor4;
+                __result.framesContainerScale = (0.64f / rows - 0.01f) / 0.31f * 0.95f;
                 break;
             default:
                 settingIdSuffix = "wide6";
@@ -95,9 +98,11 @@ internal class LevelPage_ComputeLayout
                 subgoalAnchor = __instance.subgoalsAnchor6;
                 __result.framesAnchor = __instance.framesAnchor6;
                 __result.toolboxAnchor = __instance.toolsAnchor6;
+                __result.framesContainerScale = (0.64f / rows - 0.01f) / 0.31f;
                 break;
         }
-        if (spec.HasSubgoals() || (spec.HasDevilGoals() && Storyteller.game.IsDevilUnlocked()))
+
+        if (spec.HasRegularSubgoals() || (spec.HasDevilSubgoals() && Storyteller.game.IsDevilUnlocked()))
         {
             __result.mainGoalAnchorPostSubgoalReveal = mainAnchorSubgoals;
             __result.subgoalAnchor = subgoalAnchor;
@@ -106,29 +111,7 @@ internal class LevelPage_ComputeLayout
         {
             __result.mainGoalAnchorPostSubgoalReveal = __result.mainGoalAnchor;
         }
-        int cols = (frames - 1) / rows + 1;
-
-        __result.framesToolboxSeparatorY = frames < 4 ? -0.32f : -0.55f;
         __result.actorsScale = frames < 4 ? 1.1f : 1.06f;
-
-        switch (frames)
-        {
-            case < 7:
-                __result.framesContainerScale = 1.0f;
-                __result.usesCompactFrames = false;
-                break;
-            case 7:
-            case 8:
-                __result.framesContainerScale = 0.78f;
-                __result.usesCompactFrames = true;
-                break;
-            default:
-                __result.framesContainerScale = (0.64f / rows - 0.01f) / 0.31f;
-                __result.usesCompactFrames = true;
-                break;
-        }
-
-        __result.settingIdSuffix = settingIdSuffix;
         __result.supportedSettingSuffixes = new string[] { settingIdSuffix, "wide3", "wide6" };
         __result.settingPlaceholder = ResourceLoader.GetSprite("set_placeholder_" + settingIdSuffix);
         __result.shadowSprite = ResourceLoader.GetSprite("set_framecontainer_shadow_" + settingIdSuffix);
@@ -143,7 +126,7 @@ internal class LevelPage_ComputeLayout
         __result.borderSprites = new string[frames];
         var bounds = __result.settingPlaceholder.bounds;
         Vector3 extents = bounds.extents * __result.framesContainerScale;
-        bounds.extents = extents;
+        bounds.extents = extents * 2;
         Vector3 framesAnchorPos = __result.framesAnchor.position;
         float yOffset = rows * (extents.y + 0.01f) - 0.01f + framesAnchorPos.y;
         int currentFrame = 0;
@@ -180,4 +163,3 @@ internal class LevelPage_ComputeLayout
         return false;
     }
 }
-*/
