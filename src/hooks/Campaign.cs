@@ -77,6 +77,10 @@ internal class Campaign_LoadCampaign
             var chapter = chapters[chapterId];
             var files = Directory.GetFiles(chapter, "*.txt");
             files.Sort(Compare);
+            if (files.Length > 9)
+            {
+                files = files[0..9];
+            }
 
             var chapter_name = SplitWhitespace(chapter).Last();
             Campaign.BeginChapter(
