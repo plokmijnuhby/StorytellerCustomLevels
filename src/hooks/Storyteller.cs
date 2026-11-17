@@ -9,24 +9,28 @@ internal class Storyteller_Awake
     static void Postfix()
     {
         var game = Storyteller.game;
-        if (game.savegameCache.totalDevilLevels == 0)
-        {
-            var pages = game.pages;
-            for (int i = 0; i < pages.Count;)
-            {
-                if (pages[i].type == PageType.Devil || pages[i].type == PageType.Empty)
-                {
-                    pages.RemoveAt(i);
-                }
-                else
-                {
-                    i++;
-                }
-            }
-        }
         // Prevent displaying certain tutorial text
         game.savegame.seenStamps = true;
         // Prevent a check which crashes if there are too few levels in the game
         game.savegame.indexUnlocked = true;
+    }
+}
+
+[HarmonyPatch(typeof(Storyteller), nameof(Storyteller.GoToPage))]
+class Storyteller_GoToPage
+{
+    static bool Prefix(Storyteller __instance, int pageIndex)
+    {
+        if (__instance.savegameCache.totalDevilLevels != 0)
+        {
+            return true;
+        }
+        var target = __instance.pages[pageIndex].type;
+        if (target == PageType.Empty || target == PageType.Devil)
+        {
+            __instance.StartCredits();
+            return false;
+        }
+        return true;
     }
 }
