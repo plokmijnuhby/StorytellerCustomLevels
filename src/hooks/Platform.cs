@@ -13,3 +13,13 @@ internal class Platform_GetLocale
         return null;
     }
 }
+
+[HarmonyPatch(typeof(Platform), nameof(Platform.GetPathForSaveSlot))]
+internal class Platform_GetPathForSaveSlot
+{
+    static bool Prefix(int slot, ref string __result)
+    {
+        __result = $"./custom_levels/save_{slot}";
+        return false;
+    }
+}
